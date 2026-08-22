@@ -1,0 +1,1 @@
+// here we will configure the client side data models for validation and type security for the incoming data from the server side 
