@@ -13,10 +13,10 @@ export default async function createParkingCollection() {
     console.log("user collection created successfully");
 
     await Promise.all([
-        databases.createStringAttribute(db, parkingSpaceCollection, "spaceId", 50, true),
+        databases.createStringAttribute(db, parkingSpaceCollection, "name", 50, true),
         databases.createStringAttribute(db, parkingSpaceCollection, "ownerId", 50, true),
-        databases.createFloatAttribute(db, parkingSpaceCollection, "location_latitude", true),
-        databases.createFloatAttribute(db, parkingSpaceCollection, "location_longitude", true),
+        databases.createFloatAttribute(db, parkingSpaceCollection, "latitude", true),
+        databases.createFloatAttribute(db, parkingSpaceCollection, "longitude", true),
         databases.createIntegerAttribute(db, parkingSpaceCollection, "price_per_hour", true, 1),
         databases.createBooleanAttribute(db, parkingSpaceCollection, "availability_status", true),
     ])

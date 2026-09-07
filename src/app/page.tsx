@@ -5,6 +5,7 @@ import 'leaflet/dist/leaflet.css';
 import Image from 'next/image';
 import { useState, useEffect } from 'react';
 import Link from 'next/link';
+import axios from "axios"
 
 // the loading = 'eager' is to load the image instantly at the time of page render
 
@@ -13,16 +14,47 @@ const Map = dynamic(() => import("./map"), { ssr: false });
 export default function Home() {
   const [showpanel, setShowpanel] = useState(false)
   const [searchtext, setSearchtext] = useState("")
+  const [isLoading, setIsLoading] = useState(false)
+  const [triggerMap, setTriggerMap] = useState(false)
+  const [space, setSpace] = useState({
+    price_per_hour: 0,
+    availability_status: null,
+    latitude: 51.5074,
+    longitude: 0.1278
+  })
 
   const handleClick = () => {
     setShowpanel(!showpanel);
     // profile option - if the user is a customer then show become a provider and if the user is a provider show provider dashboard
   }
 
-  const handleSearch = () => {
+  const handleSearch = async() => {
     // this will make an api call using the text that is provided inside the search box and that api will make a database call and search for the parking space near the entered location and will return the latitude and longitude of those locations which will be rendered on the map  
     if (searchtext.length != 0) {
-      // make a database api call and fetch the parking space location details and those details will be passed down to the map.tsx file named as arrayOfLocationData
+          try {
+            setIsLoading(true)
+            const data = searchtext.toLowerCase().toString()
+            const response = await axios.post("/api/search", {data})
+            console.log("search success", response.data);
+            
+            // now store these details inside the localStorage of the browser and then extract those coordinates in the map component and then reload the page 
+            const {latitude, longitude, price_per_hour, availability_status } = response.data.data
+            // localStorage.setItem("searchData", JSON.stringify(response.data))
+            // setTriggerMap(prev => !prev)
+            setSpace({
+              price_per_hour: price_per_hour,
+              availability_status: availability_status,
+              latitude: latitude,
+              longitude: longitude
+            })
+
+          } catch (error: any) {
+            console.log(error);
+            console.log("search failed", error?.message);
+          }
+          finally{
+            setIsLoading(false)
+          }
     }
   }
 
@@ -97,16 +129,13 @@ export default function Home() {
         type="text" 
         placeholder='enter your text here' 
         value= {searchtext}
-        onChange={(e) => {setSearchtext(e.target.value)}}
+        onChange={(e) => setSearchtext(e.target.value)}
         />
 
         <input className='bg-green-500 hover:bg-green-600 my-3 mr-1 rounded-tr-md rounded-br-md px-2' 
           type="button" 
           value="search"
-          onClick={(e) => {
-            e.preventDefault();
-            handleSearch()
-          }}
+          onClick={handleSearch}
         />
       </div>
       
@@ -119,7 +148,7 @@ export default function Home() {
       </div>
 
     </div>
-    <Map />   
+    <Map space={space}/>   
   </div>
   );
 }
