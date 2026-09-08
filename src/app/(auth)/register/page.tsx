@@ -51,13 +51,16 @@ function RegisterPage(){
     }
 
     return (
-        <div>
+        <div className="">
             {error && (
                 <p>{error}</p>
             )}
 
             <form onSubmit={handleSubmit}>
             </form>
+            <div>
+                this is the register page 
+            </div>
         </div>
     )
 }
