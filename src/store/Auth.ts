@@ -43,7 +43,10 @@ interface IAuthStore {
         error?: AppwriteException | null
     }>
 
-    logout(): Promise<void>;
+    logout(): Promise<{
+        success:boolean;
+        error?: AppwriteException | null;
+    }>;
 }
 
 // The create function in Zustand initializes a global state store and returns a custom React (((hook))) that components use to read state and trigger actions. It allows you to manage application state externally without needing a context Provider.
@@ -77,17 +80,12 @@ export const useAuthStore = create<IAuthStore>()(
 
             async login(email: string, password: string){
                 try {
-                    const session = await account.createEmailPasswordSession(email, password) // this creates an active login session for the user and it authenticates the user , creates a session by creating a session token and returns details like session ID , user ID and secret
+                    const session = await account.createEmailPasswordSession(email, password) // this creates an active login session for the user and it authenticates the user , creates a session by creating a session token and storing it in the HTTP-only cookie in the browser that represents the session and returns details like session ID , user ID and secret
                     const [user, {jwt}] = await Promise.all([
                         account.get<UserPrefs>(), // this fetches the current user object along with their preferences field which contains the reputation field 
                         account.createJWT()  // we are simply creating a jwt which will be updated in the variable and will be sent with every api call from the logged in user 
                     ])
-                    // if the user does not already have a reputation then a reputation of 0 will be assigned to the user using the updatePrefs method which follows the <UserPrefs> interface 
-                    if (!user.prefs?.reputation) {
-                        await account.updatePrefs<UserPrefs>({
-                            reputation: 0
-                        })      
-                    }
+
                     // we are updating all the values of the useAuthStore and returning success as true 
                     set({session, user, jwt})
                     return {success: true}
@@ -103,6 +101,9 @@ export const useAuthStore = create<IAuthStore>()(
             async createAccount(name: string, email: string, password: string){
                 try {
                     await account.create(ID.unique(), email, password, name) // here we are creating a new user in our appwrite project with a unique ID and the email, password and name provided when this method is called from the FE.
+
+                    // you can fire a account.createVerification(url) method to send the user a verify email which will send the user to the given link and then you can extract the params like userId and secret from the query parameters and then call the account.updateVerification(userId , secret) to finish the process
+
                     return {success: true}
                 } catch (error) {
                     console.log(error);
@@ -117,8 +118,13 @@ export const useAuthStore = create<IAuthStore>()(
                 try {
                     await account.deleteSessions() // we are deleting the all the current user session from the user account and then reseting all the state as null again  
                     set({session: null, jwt: null, user: null})
+                    return {success: true,}
                 } catch (error) {
                     console.log(error);
+                    return {
+                        success: false,
+                        error: error instanceof AppwriteException ? error : null
+                    }
                 }
             }
         })),

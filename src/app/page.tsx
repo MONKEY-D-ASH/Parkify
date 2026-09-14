@@ -6,16 +6,18 @@ import Image from 'next/image';
 import { useState, useEffect } from 'react';
 import Link from 'next/link';
 import axios from "axios"
+import { useAuthStore } from '@/store/Auth';
+import toast from 'react-hot-toast';
 
 // the loading = 'eager' is to load the image instantly at the time of page render
 
 const Map = dynamic(() => import("./map"), { ssr: false });
 
 export default function Home() {
+  const {logout} = useAuthStore()
   const [showpanel, setShowpanel] = useState(false)
   const [searchtext, setSearchtext] = useState("")
   const [isLoading, setIsLoading] = useState(false)
-  const [triggerMap, setTriggerMap] = useState(false)
   const [space, setSpace] = useState({
     price_per_hour: 0,
     availability_status: null,
@@ -26,6 +28,16 @@ export default function Home() {
   const handleClick = () => {
     setShowpanel(!showpanel);
     // profile option - if the user is a customer then show become a provider and if the user is a provider show provider dashboard
+  }
+
+  const handleLogoutClick = async(e: React.MouseEvent<HTMLAnchorElement>) => {
+    e.preventDefault()
+    const response = await logout()
+    if (response.error) {
+      toast.error(response.error!.message)
+    }else{
+      toast.success("logout success")
+    }
   }
 
   const handleSearch = async() => {
@@ -103,7 +115,9 @@ export default function Home() {
         </div>
 
         <div className='flex justify-center items-center bg-gray-100 h-10 text-black hover:bg-gray-200 rounded-b-lg'> 
-          <Link href="./logout">Logout</Link>
+          <Link href="./logout"
+          onClick={handleLogoutClick}
+          >Logout</Link>
         </div>
         
       </div>

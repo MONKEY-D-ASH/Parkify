@@ -13,7 +13,7 @@ import { Button } from "@/components/ui/button"
 function BookSpace(){
     return (
     <div className="flex justify-center items-center flex-col h-lvh bg-gray-700">
-        <h1 className="text-white m-2 p-3 text-3xl ">Register Space</h1>
+        <h1 className="text-white m-2 p-3 text-3xl ">Book Space</h1>
         <div className=" bg-black w-100 h-100 p-2 rounded-lg">
             <FieldGroup>
 
