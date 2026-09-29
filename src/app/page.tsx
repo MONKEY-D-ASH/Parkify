@@ -21,8 +21,8 @@ export default function Home() {
   const [space, setSpace] = useState({
     price_per_hour: 0,
     availability_status: null,
-    latitude: 51.5074,
-    longitude: 0.1278
+    latitude: 5.1232,
+    longitude: 0.1242
   })
 
   const handleClick = () => {

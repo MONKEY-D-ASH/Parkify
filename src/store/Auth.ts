@@ -20,8 +20,13 @@ interface IAuthStore {
     jwt: string | null 
     user: Models.User<UserPrefs> | null
     hydrated: boolean
+    location: {
+        latitude: number,
+        longitude: number;
+    } | null;
 
     setHydrated(): void;
+    setLocation(loc: {latitude: number , longitude: number}): void;
     verifySession(): Promise<void>;
 
     login(
@@ -63,9 +68,17 @@ export const useAuthStore = create<IAuthStore>()(
             jwt: null,
             user: null,
             hydrated: false,
+            location: null,
 
             setHydrated(){
                 set({hydrated: true})
+            },
+
+            // this will set the current location of the user in the local storage and then you can use it from there to show the user on the map   
+            setLocation(loc){
+                set((state) => {
+                    state.location = loc;
+                })
             },
             
             // this verify session is crucial as suppose the user logs in the application and a valid session is created and is stored inside the zustand store and then the user closes the browser and comes back tomorrow and then we run this verifySession so that if the yesterday session is still valid then it returns that session data object and sets the session state otherwise if the session is expired then it throws an error 

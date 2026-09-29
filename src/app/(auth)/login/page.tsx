@@ -10,7 +10,9 @@ import {
 } from "@/components/ui/field"
 import { Button } from "@/components/ui/button"
 import { useAuthStore } from "@/store/Auth";
+import axios from "axios";
 import toast from "react-hot-toast";
+import { useRouter } from "next/navigation";
 
 function LoginUser(){
     const {login} = useAuthStore()
@@ -19,6 +21,7 @@ function LoginUser(){
         password: ""
     })
     const [isLoading, setIsLoading] = React.useState(false)
+    const router = useRouter()
 
     const handleClick = async(e : React.MouseEvent<HTMLButtonElement>) => {
         e.preventDefault()
@@ -26,10 +29,12 @@ function LoginUser(){
             if (user.email.length !== 0 && user.password.length !== 0) {
                 setIsLoading(true)
                 const loginResponse = await login(user.email.toString(), user.password.trim().toString())
-                if (loginResponse.error) {
-                    toast.error(loginResponse.error!.message)
+                const locationResponse = await axios.get("/api/currentLocation")
+                if (loginResponse.error || locationResponse.data.error) {
+                    toast.error("there is an error while login or setting user location")
                 }else{
                     toast.success("login success")
+                    router.push("/")
                 }   
             }
         } catch (error: any) {
