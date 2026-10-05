@@ -12,6 +12,7 @@ import {
 import { Button } from "@/components/ui/button"
 import { useRouter } from "next/navigation"
 import toast from "react-hot-toast"
+import axios from "axios"
 
 
 // this is the signup page where we will register the user and create an account for him for which we are using the createAccount() method in we defined in the useAuthStore react hook created using zustand
@@ -19,51 +20,53 @@ import toast from "react-hot-toast"
 
 function SignupPage(){
     const router = useRouter()
-    const {createAccount, login} = useAuthStore()
     const [isLoading, setIsLoading] = React.useState(false)
     const [formData, setFormData] = React.useState({
         firstname: "",
         lastname: "",
         email: "",
-        password: ""
+        password: "",
+        phoneNumber: "",
+        role: "customer",
+        address: ""
     })
 
     const handleSubmit = async(e: React.MouseEvent<HTMLButtonElement>) => {
         e.preventDefault()
 
         // validate data
-        if (!formData.firstname || !formData.lastname || !formData.email || !formData.password) {
+        if (!formData.firstname || !formData.lastname || !formData.email || !formData.password || !formData.phoneNumber || !formData.address) {
             toast.error("please fill out all the fields")
             return 
         }
 
         // call the store 
-        if (formData.firstname.length !== 0 && formData.lastname.length !== 0 && formData.email.length !== 0 && formData.password.length !== 0) {
+        if (formData.firstname.length !== 0 && formData.lastname.length !== 0 && formData.email.length !== 0 && formData.password.length !== 0 && formData.phoneNumber.length !== 0 && formData.address.length !== 0) {
             setIsLoading(true) // to show the user that we are processing and creating the account 
-            const response = await createAccount(
-                `${formData.firstname} ${formData.lastname}`,
-                formData.email?.toString(),
-                formData.password?.toString()
-            )
-            
-            if (response.error) {
-                toast.error(response.error!.message) // here we are forcefully extracting the error message from the response
-            } else {
-                // we can also redirect the user to the login page but since he has already registered himself it is safe to login the user on the go 
+            const data = {
+                username:`${formData.firstname} ${formData.lastname}`,
+                email: formData.email,
+                password: formData.password,
+                phoneNumber: formData.phoneNumber,
+                role: formData.role,
+                address: formData.address
+            }
+            try {
+                const response = await axios.post("./api/signup", data)
                 toast.success("user account created successfully")
-                const loginResponse = await login(formData.email.toString(), formData.password.toString())
-                if (loginResponse.error) {
-                    toast.error(loginResponse.error!.message)
-                }else{
-                    toast.success("login success")
-                    router.push("/") // this will push the user to the home page after login
+                setIsLoading(false) // to show the user that the account has been created successfully 
+                router.push("/") // this will push the user to the home page
+            } 
+            catch (error: any) {    
+                if (error.response) {
+                    toast.error(error.response.data.error) // here we are forcefully extracting the error message from the response
+                } else {
+                    toast.error("Something went wrong")
                 }
+                setIsLoading(false)
             }
         }
-
-        setIsLoading(false) // to show the user that the account has been created successfully 
     }
-
     return (
 
     <div className="flex justify-center items-center flex-col h-lvh bg-gray-700">
@@ -125,12 +128,55 @@ function SignupPage(){
                         <FieldDescription>password must be between 8-255 characters</FieldDescription>
                     </Field>
 
+                    <Field>
+                        <FieldLabel htmlFor="fieldgroup-phoneNumber" className="text-white">PhoneNo</FieldLabel>
+                        <Input
+                        className="text-white"
+                        id="fieldgroup-phoneNumber"
+                        type="text"
+                        placeholder="Enter phoneNumber"
+                        required
+                        value={formData.phoneNumber}
+                        onChange={(e) => setFormData({...formData, phoneNumber:e.target.value })}
+                        />
+                        <FieldDescription>Phone Number must be valid and of 10 digits</FieldDescription>
+                    </Field>
+
+                    <Field>
+                        <FieldLabel htmlFor="fieldgroup-role" className="text-white">Role</FieldLabel>
+                        <Button
+                        variant="outline"
+                        className="text-white bg-green-700"
+                        onClick={() => setFormData({...formData, role:"customer"})}
+                        >Customer</Button>
+
+                        <Button
+                        variant="outline"
+                        className="text-white bg-green-700"
+                        onClick={() => setFormData({...formData, role:"provider"})}
+                        >Provider</Button>
+                        <FieldDescription>Select your role on this platform</FieldDescription>
+                    </Field>
+
+                    <Field>
+                        <FieldLabel htmlFor="fieldgroup-address" className="text-white">Address</FieldLabel>
+                        <Input
+                        className="text-white"
+                        id="fieldgroup-address"
+                        type="text"
+                        placeholder="Enter your current address"
+                        required
+                        value={formData.address}
+                        onChange={(e) => setFormData({...formData, address:e.target.value })}
+                        />
+                    </Field>
+
                     <Field orientation="horizontal">
                         <Button 
                         type="reset" 
                         variant="outline" 
                         className="text-white"
-                        onClick={() => setFormData({firstname: "", lastname: "", email: "", password: ""})}
+                        onClick={() => setFormData({firstname: "", lastname: "", email: "", password: "", phoneNumber: "", role: "", address: ""})}
                         >Reset
                         </Button>
 

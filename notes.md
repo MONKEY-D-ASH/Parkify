@@ -1,0 +1,1 @@
+# forget about the appwrite and create your own custom authentication and database configuration using mongodb and mongoose, 

@@ -21,8 +21,8 @@ export default function Home() {
   const [space, setSpace] = useState({
     price_per_hour: 0,
     availability_status: null,
-    latitude: 5.1232,
-    longitude: 0.1242
+    latitude: 48.8566,
+    longitude: 2.3522
   })
 
   const handleClick = () => {
@@ -74,6 +74,14 @@ export default function Home() {
   // the useEffect runs when this component get mounts, the window.onerror() catches any uncaught runtime error ( like appendchild of undefined) in the browser, if there is this handler will fire
   // it first checks if there is a sessionStorage item named errorReloaded in the browser and it there is not then it will set that item and mark it as and then reload the window and return false to prevent the browser to prevent it default error handler so that we do not get to see the error on the screen 
   useEffect(() => {
+    const item = localStorage.getItem("auth")
+    if (item) {
+      const data = JSON.parse(item)
+      if (data.state.location) {
+        setSpace({...space, latitude : data.state.location.latitude, longitude : data.state.location.longitude})
+      }
+    }
+    
     window.onerror = () => {
       // reload once after an error
       if (!sessionStorage.getItem("errorReloaded")) {

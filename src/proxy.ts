@@ -2,12 +2,11 @@
 
 import { NextResponse } from 'next/server'
 import type { NextRequest } from 'next/server'
- import getOrCreateDB from './models/server/db.setup'
 // This function can be marked `async` if using `await` inside
 export async function proxy(request: NextRequest) {
-  await Promise.all([
-    getOrCreateDB()
-  ])
+
+  // intercept the request and decode it and then check if the access token is expired or not , if yes then return the response with the 401 status which will be intercepted by the axios interceptor and will generate the 
+
   return NextResponse.next()
 }
  

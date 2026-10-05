@@ -93,17 +93,23 @@ export const useAuthStore = create<IAuthStore>()(
 
             async login(email: string, password: string){
                 try {
+                    console.log("attempting login");
                     const session = await account.createEmailPasswordSession(email, password) // this creates an active login session for the user and it authenticates the user , creates a session by creating a session token and storing it in the HTTP-only cookie in the browser that represents the session and returns details like session ID , user ID and secret
+                    console.log("session created",session);
                     const [user, {jwt}] = await Promise.all([
                         account.get<UserPrefs>(), // this fetches the current user object along with their preferences field which contains the reputation field 
                         account.createJWT()  // we are simply creating a jwt which will be updated in the variable and will be sent with every api call from the logged in user 
                     ])
 
                     // we are updating all the values of the useAuthStore and returning success as true 
-                    set({session, user, jwt})
+                    set((state) => {
+                        state.session = session
+                        state.jwt = jwt
+                        state.user = user
+                    })
                     return {success: true}
                 } catch (error) {
-                    console.log(error);
+                    console.log("there is any error in auth.js while login",error);
                     return{
                         success: false,
                         error: error instanceof AppwriteException ? error: null
@@ -130,7 +136,7 @@ export const useAuthStore = create<IAuthStore>()(
             async logout(){
                 try {
                     await account.deleteSessions() // we are deleting the all the current user session from the user account and then reseting all the state as null again  
-                    set({session: null, jwt: null, user: null})
+                    set({session: null, jwt: null, user: null, location:null})
                     return {success: true,}
                 } catch (error) {
                     console.log(error);

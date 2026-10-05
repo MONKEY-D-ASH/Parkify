@@ -15,7 +15,7 @@ import toast from "react-hot-toast";
 import { useRouter } from "next/navigation";
 
 function LoginUser(){
-    const {login} = useAuthStore()
+    const {login, setLocation} = useAuthStore()
     const [user, setUser] = React.useState({
         email: "",
         password: ""
@@ -29,16 +29,32 @@ function LoginUser(){
             if (user.email.length !== 0 && user.password.length !== 0) {
                 setIsLoading(true)
                 const loginResponse = await login(user.email.toString(), user.password.trim().toString())
-                const locationResponse = await axios.get("/api/currentLocation")
-                if (loginResponse.error || locationResponse.data.error) {
-                    toast.error("there is an error while login or setting user location")
+
+                if (loginResponse.error) {
+                    toast.error("there is an error while login")
                 }else{
                     toast.success("login success")
-                    router.push("/")
-                }   
-            }
+                } 
+
+                if (!navigator.geolocation) {
+                        throw new Error("Geolocation is not supported by your browser");
+                }
+                // requesting the current location of the user 
+                navigator.geolocation.getCurrentPosition((position) => {
+                    const latitude = position.coords.latitude;
+                    const longitude = position.coords.longitude;
+                    const data = {latitude, longitude}
+                    setLocation(data)
+                },
+                
+                (error: any) => {
+                    console.log("there is an error in getting current location",error);
+                }
+            )
+                router.push("/")
+        }
         } catch (error: any) {
-            console.log("there is an error in user login", error!.message);
+            console.log("there is an error in user login or getting current location", error!.message);
             toast.error("login failed")
         }
         finally{

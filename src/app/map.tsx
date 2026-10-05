@@ -29,40 +29,40 @@ function Recenter({latitude, longitude}: {latitude: number, longitude: number}){
   return null
 }
 
-function Routing({sourceCity, destinationCity}: {sourceCity: {latitude:number, longitude:number}, destinationCity: {latitude:number, longitude:number}}){
-  const map = useMap()
-  const routingControl = L.routing.control({
-         waypoints: [
-           L.latLng( parseFloat((sourceCity.latitude).toString()), parseFloat((sourceCity.longitude).toString()) ),
-           L.latLng( parseFloat((sourceCity.latitude).toString()), parseFloat((sourceCity.longitude).toString()) )
-         ],
- }).addTo(map);
-    return null
-  }
+// function Routing({sourceCity, destinationCity}: {sourceCity: {latitude:number, longitude:number}, destinationCity: {latitude:number, longitude:number}}){
+//   const map = useMap()
+//   const routingControl = L.routing.control({
+//          waypoints: [
+//            L.latLng( parseFloat((sourceCity.latitude).toString()), parseFloat((sourceCity.longitude).toString()) ),
+//            L.latLng( parseFloat((sourceCity.latitude).toString()), parseFloat((sourceCity.longitude).toString()) )
+//          ],
+//  }).addTo(map);
+//     return null
+//   }
 
 // we are passing an array of locations data from the page.tsx file to this map.tsx file which is fetched in the page.tsx file using an api call and now these location data will be destructured here to display the different markers on the map and inside the popup we will display the details about the location which is also extracted from the location object 
 export default function Map({space}: any) {
   const router = useRouter()
   const [marker, setMarker] = useState()
-  const [currentSpace, setCurrentSpace] = useState({
-    latitude: 5.1243,
-    longitude: 0.124
-  })
+  // const [currentSpace, setCurrentSpace] = useState({
+  //   latitude: 5.1243,
+  //   longitude: 0.124
+  // })
   
-  useEffect(() => {
-    const response = (localStorage.getItem("auth"))
-    if (response) {
-      try{
-        const data = JSON.parse(response)
-        if (data.location) {
-          setCurrentSpace({...space, latitude:data.location.latitude, longitude: data.location.longitude})
-        }
-      }
-      catch(error){
-        console.log("there is an error while setting the location of the user from local storage");
-      }
-    }
-  }, [])
+  // useEffect(() => {
+  //   const response = (localStorage.getItem("auth"))
+  //   if (response) {
+  //     try{
+  //       const data = JSON.parse(response)
+  //       if (data.location) {
+  //         setCurrentSpace({...space, latitude:data.location.latitude, longitude: data.location.longitude})
+  //       }
+  //     }
+  //     catch(error){
+  //       console.log("there is an error while setting the location of the user from local storage");
+  //     }
+  //   }
+  // }, [])
 
   const handleClick = (e: React.MouseEvent<HTMLButtonElement>) => {
     e.preventDefault()
@@ -104,8 +104,6 @@ export default function Map({space}: any) {
 
       <Recenter latitude={space.latitude} longitude={space.longitude}/>
       
-      <Routing sourceCity={currentSpace} destinationCity={space}/>
-
     </MapContainer>
   );
 }
