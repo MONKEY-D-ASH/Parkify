@@ -1,5 +1,4 @@
 "use client"
-
 import dynamic from 'next/dynamic';
 import 'leaflet/dist/leaflet.css';
 import Image from 'next/image';
@@ -10,7 +9,6 @@ import { useAuthStore } from '@/store/Auth';
 import toast from 'react-hot-toast';
 
 // the loading = 'eager' is to load the image instantly at the time of page render
-
 const Map = dynamic(() => import("./map"), { ssr: false });
 
 export default function Home() {

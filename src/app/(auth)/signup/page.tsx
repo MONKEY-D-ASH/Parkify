@@ -69,11 +69,11 @@ function SignupPage(){
     }
     return (
 
-    <div className="flex justify-center items-center flex-col h-lvh bg-gray-700">
+    <div className="flex justify-center items-center flex-col h-3vh bg-gray-700">
 
         
         <h1 className="text-white m-2 p-3 text-3xl">{isLoading? "processing..." : "Sign Up"}</h1>
-            <div className=" bg-black w-100 h-100 p-2 rounded-lg">
+            <div className=" bg-black w-100 h-3vh p-2 rounded-lg">
                     <FieldGroup>
                     <Field>
                         <FieldLabel htmlFor="fieldgroup-firstname" className="text-white">First Name</FieldLabel>
@@ -145,6 +145,7 @@ function SignupPage(){
                     <Field>
                         <FieldLabel htmlFor="fieldgroup-role" className="text-white">Role</FieldLabel>
                         <Button
+                        id="fieldgroup-role"
                         variant="outline"
                         className="text-white bg-green-700"
                         onClick={() => setFormData({...formData, role:"customer"})}
@@ -152,6 +153,7 @@ function SignupPage(){
 
                         <Button
                         variant="outline"
+                        id="fieldgroup-role"
                         className="text-white bg-green-700"
                         onClick={() => setFormData({...formData, role:"provider"})}
                         >Provider</Button>

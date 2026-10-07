@@ -1,34 +1,96 @@
-import { connect } from "@/models/db.config";
+import { connect } from "@/models/dbConfig";
 import User from "@/models/user.collection"
 import { NextRequest, NextResponse } from "next/server";
-import bcrypt from "bcryptjs";
+import bcrypt from "bcryptjs"
 import jwt from "jsonwebtoken"
+import { ApiError } from "next/dist/server/api-utils";
 
-// you have to use this inside the route in which you are making a connection to the mongodb database
 connect()
+
+const generateAccessAndRefreshTokens = async function(userId: string){
+    console.log("finding the user for generating access and refresh tokens");
+    const user = await User.findById(userId)
+    console.log("got the user");
+    console.log(user);
+    
+    if (!user) {
+        throw new ApiError(404, "There is an error while finding the user")
+    }
+
+    console.log("generating the tokens...");
+    
+    const accessToken = await user.generateAccessToken()
+    const refreshToken = await user.generateRefreshToken()
+
+    console.log("setting the tokens inside the user document");
+    
+    user.refreshToken = refreshToken
+    await user.save({validateBeforeSave: false})
+    return {accessToken, refreshToken}
+}
 
 export async function POST(request: NextRequest){
     try {        
+        console.log("entering the login route");
+        
         const reqBody = await request.json()
         const { email, password } = reqBody;
         console.log(reqBody);
         
         // check if user exists or not 
+        console.log("finding the user");
         const user = await User.findOne({email})
         if(!user){
             return NextResponse.json({error: "User does not exist"}, {status: 400})
         }
-
+        console.log(user);
+        
         // check if the password is correct or not 
+        console.log("checking the password");
+        console.log(password);
+        console.log(user.password);
         const isPasswordCorrect = await bcrypt.compare(password, user.password)
-        if(!isPasswordCorrect){
-            return NextResponse.json({error: "The password is incorrect"}, {status: 400})
-        }
+        console.log(isPasswordCorrect);
 
+        if(!isPasswordCorrect){
+            return NextResponse.json({error: "The password is incorrect"}, {status: 430})
+        }
+        
         // generate the access and the refresh token and encrypting them and storing them inside the browser cookies 
         // create token data
+        console.log("generating the access and the refresh tokens");
+        const { accessToken, refreshToken } = await generateAccessAndRefreshTokens(user._id)
+        
+        console.log("finding the logged in user");
+        const loggedInUser = await User.findById(user._id).select("-password -refreshToken -forgotPasswordToken -forgotPasswordTokenExpiry -verifyToken -verifyTokenExpiry")
+        if (!loggedInUser) {
+            throw new ApiError(404, "Logged In user not found")
+        }
+        
+        // the built in Nextjs NextResponse object has the access to the cookies of the user browser and we can set and get the cookies 
+        console.log("sending the response to the frontend");
+        const response = NextResponse.json({
+            message: "Login successful",
+            success: true,
+            user: loggedInUser
+        }) 
+        // we are setting the cookies on the browser and this method takes three paramters: name, value and options   
+        response.cookies.set("accessToken", accessToken, {
+            httpOnly: true,
+            path: "/"
+        })
+        response.cookies.set("refreshToken", refreshToken, {
+            httpOnly: true,
+            path: "/"
+        })
+        return response;
 
-        // NOTE: HOW TO JWT TOKEN WORKS 
+    } catch (error : any) {
+        return NextResponse.json({error: error.message}, {status: 500})
+    }
+}
+
+// NOTE: HOW TO JWT TOKEN WORKS 
 
         // the jwt token comprises of three parts the header (containing the algorithm to be used and the type of the token which is the jwt) , the payload (it is a JSON object containing the actual core data referred to as claims (standard and custom claims)), the signature ( it is the thing that the server compares to check if the token is valid or not)
 
@@ -42,32 +104,3 @@ export async function POST(request: NextRequest){
         // The Server Compares: It compares its newly calculated signature against the signature string sent by the client.
         // If they match: The server knows the token is authentic and unchanged.
         // If they do not match: If a user changes their role from "user" to "admin" in the payload, the server's calculated signature will completely mismatch the token's signature. The server will immediately catch the tampering and throw a 403 Forbidden error
-
-        const tokenData = {
-            id: user._id,
-            username: user.username,
-            email: user.email
-        }
-
-        // this exclaimation at the end tells the typescript compiler to trust on us that this value will never be a null or undefind , it is called the Non-Null Assertion Operator in Typescript
-        const token = jwt.sign(tokenData, process.env.TOKEN_SECRET!, {expiresIn: "1d"})
-        if(!token){
-            return NextResponse.json({error: "There was an error while generating access token"})
-        }
-
-        // the built in Nextjs NextResponse object has the access to the cookies of the user browser and we can set and get the cookies 
-        const response = NextResponse.json({
-            message: "Login successful",
-            success: true
-        }) 
-        // we are setting the cookies on the browser and this method takes three paramters: name, value and options   
-        response.cookies.set("token", token, {
-            httpOnly: true, // means this cookie cannot be accessed by the client-side javascript, it is a security flag
-            path: "/" // the path field determine which path will be able to access and send this cookie in its http request, by setting the path "/" we can say that the cookie is available everywhere, if it was like "/admin" that means only the http requests starting with /admin can access and send this cookie in their http request
-        })
-        return response;
-
-    } catch (error : any) {
-        return NextResponse.json({error: error.message}, {status: 500})
-    }
-}

@@ -28,29 +28,24 @@ function LoginUser(){
         try {
             if (user.email.length !== 0 && user.password.length !== 0) {
                 setIsLoading(true)
-                const loginResponse = await login(user.email.toString(), user.password.trim().toString())
+                const loginResponse = await axios.post("./api/login", user)
+                toast.success("login success") 
 
-                if (loginResponse.error) {
-                    toast.error("there is an error while login")
-                }else{
-                    toast.success("login success")
-                } 
-
-                if (!navigator.geolocation) {
-                        throw new Error("Geolocation is not supported by your browser");
-                }
-                // requesting the current location of the user 
-                navigator.geolocation.getCurrentPosition((position) => {
-                    const latitude = position.coords.latitude;
-                    const longitude = position.coords.longitude;
-                    const data = {latitude, longitude}
-                    setLocation(data)
-                },
+            //     if (!navigator.geolocation) {
+            //             throw new Error("Geolocation is not supported by your browser");
+            //     }
+            //     // requesting the current location of the user 
+            //     navigator.geolocation.getCurrentPosition((position) => {
+            //         const latitude = position.coords.latitude;
+            //         const longitude = position.coords.longitude;
+            //         const data = {latitude, longitude}
+            //         setLocation(data)
+            //     },
                 
-                (error: any) => {
-                    console.log("there is an error in getting current location",error);
-                }
-            )
+            //     (error: any) => {
+            //         console.log("there is an error in getting current location",error);
+            //     }
+            // )
                 router.push("/")
         }
         } catch (error: any) {

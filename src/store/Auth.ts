@@ -3,7 +3,7 @@ import { immer } from "zustand/middleware/immer";
 import { persist } from "zustand/middleware";
 
 import { AppwriteException, ID, Models } from "appwrite"
-import { account } from "@/models/client/config";
+import axios from "axios";
 
 // we are gonna create a reputation for each user based on his/her contribution on the platform 
 
@@ -15,10 +15,8 @@ export interface UserPrefs {
 // It specifies exactly what properties and methods an object must have, along with their data types, without providing any actual implementation logic.
 // here we are defining an object called the IAuthStore in which we are defining the things we required to authenticate the user and also the methods to implement them, we are also planning for the type safety by providing an alternative for the vairables as null
 // this is just for type safety during the complile time and provide structure and could also be skipped in case of javascript 
-interface IAuthStore {
-    session: Models.Session | null;
-    jwt: string | null 
-    user: Models.User<UserPrefs> | null
+interface IAuthStore { 
+    user: object | null
     hydrated: boolean
     location: {
         latitude: number,
@@ -27,7 +25,7 @@ interface IAuthStore {
 
     setHydrated(): void;
     setLocation(loc: {latitude: number , longitude: number}): void;
-    verifySession(): Promise<void>;
+    // verifySession(): Promise<void>;
 
     login(
         email: string,
@@ -35,17 +33,20 @@ interface IAuthStore {
     ): Promise<
     {
         success: boolean; 
-        error?: AppwriteException | null
+        error?: string | null
     }>
 
     createAccount(
-        name: string,
+        username: string,
         email: string,
-        password: string
+        password: string,
+        phoneNumber: string,
+        role: string,
+        address: string
     ): Promise<
     {
         success: boolean;
-        error?: AppwriteException | null
+        error?: string | null
     }>
 
     logout(): Promise<{
@@ -64,8 +65,6 @@ interface IAuthStore {
 export const useAuthStore = create<IAuthStore>()(
     persist(
         immer((set) => ({
-            session: null,
-            jwt: null,
             user: null,
             hydrated: false,
             location: null,
@@ -81,62 +80,57 @@ export const useAuthStore = create<IAuthStore>()(
                 })
             },
             
-            // this verify session is crucial as suppose the user logs in the application and a valid session is created and is stored inside the zustand store and then the user closes the browser and comes back tomorrow and then we run this verifySession so that if the yesterday session is still valid then it returns that session data object and sets the session state otherwise if the session is expired then it throws an error 
-            async verifySession(){
-                try {
-                    const session = await account.getSession("current") 
-                    set({session})
-                } catch (error) {
-                    console.log(error);
-                }
-            },
+            // // this verify session is crucial as suppose the user logs in the application and a valid session is created and is stored inside the zustand store and then the user closes the browser and comes back tomorrow and then we run this verifySession so that if the yesterday session is still valid then it returns that session data object and sets the session state otherwise if the session is expired then it throws an error 
+            // async verifySession(){
+            //     try {
+            //         const session = await account.getSession("current") 
+            //         set({session})
+            //     } catch (error) {
+            //         console.log(error);
+            //     }
+            // },
 
             async login(email: string, password: string){
                 try {
                     console.log("attempting login");
-                    const session = await account.createEmailPasswordSession(email, password) // this creates an active login session for the user and it authenticates the user , creates a session by creating a session token and storing it in the HTTP-only cookie in the browser that represents the session and returns details like session ID , user ID and secret
-                    console.log("session created",session);
-                    const [user, {jwt}] = await Promise.all([
-                        account.get<UserPrefs>(), // this fetches the current user object along with their preferences field which contains the reputation field 
-                        account.createJWT()  // we are simply creating a jwt which will be updated in the variable and will be sent with every api call from the logged in user 
-                    ])
-
-                    // we are updating all the values of the useAuthStore and returning success as true 
+                    const data = {email, password}
+                    const response = await axios.post("./api/login",data)
                     set((state) => {
-                        state.session = session
-                        state.jwt = jwt
-                        state.user = user
+                        state.user = response.data.user
                     })
                     return {success: true}
-                } catch (error) {
-                    console.log("there is any error in auth.js while login",error);
+                } catch (error: any) {
+                    console.log("there is any error in auth.js while login", error);
                     return{
                         success: false,
-                        error: error instanceof AppwriteException ? error: null
+                        error: error? error.data.error : null
                     }
                 }
             },
 
-            async createAccount(name: string, email: string, password: string){
+            async createAccount(username: string, email: string, password: string, phoneNumber: string, role: string, address: string){
                 try {
-                    await account.create(ID.unique(), email, password, name) // here we are creating a new user in our appwrite project with a unique ID and the email, password and name provided when this method is called from the FE.
+                    console.log("enter the createAccount method in authStore");
 
-                    // you can fire a account.createVerification(url) method to send the user a verify email which will send the user to the given link and then you can extract the params like userId and secret from the query parameters and then call the account.updateVerification(userId , secret) to finish the process
-
+                    const data = {username, email, password, phoneNumber, role, address}
+                    const response = await axios.post("./api/signup", data)
+                    // you can fire a account.createVerification(url) method to send the user a verify email which will send the user to the given link and then you can extract the params like userId and secret from the query parameters and then you can set the isVerified field in the user document to true to finish the process
+                    console.log("account created successfully in authStore");
+                    
                     return {success: true}
-                } catch (error) {
-                    console.log(error);
+                } catch (error: any) {
+                    console.log("There is an error in auth.js while creating user account",error);
                     return {
                         success: false,
-                        error: error instanceof AppwriteException ? error : null // this means if the error came from the appwrite then it will have the properties of the appwriteException class and if false then it is some other kind of error
+                        error: error.response?.data?.error || null 
                     }
                 }
             },  
 
             async logout(){
                 try {
-                    await account.deleteSessions() // we are deleting the all the current user session from the user account and then reseting all the state as null again  
-                    set({session: null, jwt: null, user: null, location:null})
+                    const response  = await axios.get("./api/logout")
+                    // what you have to simply do is remove the refreshToken from the user document so no furthur accessToken can be generated from it 
                     return {success: true,}
                 } catch (error) {
                     console.log(error);
