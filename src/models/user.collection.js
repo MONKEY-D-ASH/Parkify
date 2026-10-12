@@ -58,15 +58,19 @@ const userSchema = new mongoose.Schema({
 // one such thing we would wanna do is encrypt the password before storing it in your database
 // never use the arrow function while writing the prehook as you need context so using the traditional function we can now access the objects of the userScehma and perform operations on it and this function always takes a "next" parameter, because next is the way to pass on your request from one middleware to the next middleware or wherever it needs to go
 
-userSchema.pre("save", async function (next) {
-    try {
-    if(!this.isModified("password")) {
-        return next()
-    } // we are exiting the function if the modified field is "NOT" the password field becasue if everytime we save something in the using the schema this encryption will happen everytime and we do not want that
-    this.password = await bcrypt.hash(this.password, 10) // assigning the password field with the given password after encryption
-        }catch (error) {
-            console.log("there is an error in password hashing in the userCollection pre hook", error.message);
-    }
+userSchema.pre("save", async function () {
+    if (!this.isModified("password")) return; 
+    this.password = await bcrypt.hash(this.password, 10)
+
+    // try {
+    // if(!this.isModified("password")) {
+    //     return next()
+    // } // we are exiting the function if the modified field is "NOT" the password field becasue if everytime we save something in the using the schema this encryption will happen everytime and we do not want that
+    // this.password = await bcrypt.hash(this.password, 10) // assigning the password field with the given password after encryption
+    // next()
+    // }catch (error) {
+    //         console.log("there is an error in password hashing in the userCollection pre hook", error.message);
+    // }
 })
 
 // what this method do is, it will take the user's given password and the existing password in the database and match it
@@ -90,9 +94,7 @@ userSchema.methods.isPasswordCorrect = async function(password){
 
 userSchema.methods.generateAccessToken = function (){
     // short lived access token
-    // jwt.sign method generates and digitally signs a compact JSON web Token string, it takes the payload as a js object and the secret or private key and some options like : expiresIn, algorithm etc in the form of an object 
-    console.log("entring to generate the access token");
-    
+    // jwt.sign method generates and digitally signs a compact JSON web Token string, it takes the payload as a js object and the secret or private key and some options like : expiresIn, algorithm etc in the form of an object     
     return jwt.sign({
         _id: this._id,
         email: this.email,

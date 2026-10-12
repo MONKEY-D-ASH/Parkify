@@ -1,0 +1,1 @@
+// write the logout logic here and call it directly from the logout button using the axios 

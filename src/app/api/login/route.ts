@@ -8,22 +8,15 @@ import { ApiError } from "next/dist/server/api-utils";
 connect()
 
 const generateAccessAndRefreshTokens = async function(userId: string){
-    console.log("finding the user for generating access and refresh tokens");
     const user = await User.findById(userId)
-    console.log("got the user");
-    console.log(user);
     
     if (!user) {
         throw new ApiError(404, "There is an error while finding the user")
     }
 
-    console.log("generating the tokens...");
-    
     const accessToken = await user.generateAccessToken()
     const refreshToken = await user.generateRefreshToken()
 
-    console.log("setting the tokens inside the user document");
-    
     user.refreshToken = refreshToken
     await user.save({validateBeforeSave: false})
     return {accessToken, refreshToken}
@@ -31,26 +24,17 @@ const generateAccessAndRefreshTokens = async function(userId: string){
 
 export async function POST(request: NextRequest){
     try {        
-        console.log("entering the login route");
-        
         const reqBody = await request.json()
         const { email, password } = reqBody;
-        console.log(reqBody);
         
         // check if user exists or not 
-        console.log("finding the user");
         const user = await User.findOne({email})
         if(!user){
             return NextResponse.json({error: "User does not exist"}, {status: 400})
         }
-        console.log(user);
         
         // check if the password is correct or not 
-        console.log("checking the password");
-        console.log(password);
-        console.log(user.password);
         const isPasswordCorrect = await bcrypt.compare(password, user.password)
-        console.log(isPasswordCorrect);
 
         if(!isPasswordCorrect){
             return NextResponse.json({error: "The password is incorrect"}, {status: 430})
@@ -58,17 +42,14 @@ export async function POST(request: NextRequest){
         
         // generate the access and the refresh token and encrypting them and storing them inside the browser cookies 
         // create token data
-        console.log("generating the access and the refresh tokens");
         const { accessToken, refreshToken } = await generateAccessAndRefreshTokens(user._id)
         
-        console.log("finding the logged in user");
         const loggedInUser = await User.findById(user._id).select("-password -refreshToken -forgotPasswordToken -forgotPasswordTokenExpiry -verifyToken -verifyTokenExpiry")
         if (!loggedInUser) {
             throw new ApiError(404, "Logged In user not found")
         }
         
         // the built in Nextjs NextResponse object has the access to the cookies of the user browser and we can set and get the cookies 
-        console.log("sending the response to the frontend");
         const response = NextResponse.json({
             message: "Login successful",
             success: true,
