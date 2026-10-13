@@ -1,7 +1,6 @@
 import  {connect}  from "@/models/dbConfig"
 import User from "@/models/user.collection"
 import { NextRequest, NextResponse } from "next/server"
-import bcrypt from "bcryptjs"
 
 connect()
 

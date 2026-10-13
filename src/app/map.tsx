@@ -85,7 +85,7 @@ export default function Map({space}: any) {
         url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
       />
 
-      <Marker position={position}>
+      <Marker position={position} >
       <Popup> 
         <div className='bg-blue-700 p-2 text-white rounded-md m-1'>
           price: ${space.price_per_hour}.

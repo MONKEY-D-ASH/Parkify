@@ -1,34 +1,47 @@
-// // here we will define a route for the search of the location 
+import  {connect}  from "@/models/dbConfig"
+import ParkingSpace from "@/models/user.collection"
+import { NextRequest, NextResponse } from "next/server"
 
-// import { db, parkingSpaceCollection } from "@/models/name";
-// import { NextRequest, NextResponse } from "next/server";
-// import { Query } from "node-appwrite";
+connect()
 
-// export async function POST(request: NextRequest){
-//     try {
-//         const {data} = await request.json()        
-//         const response = await databases.listDocuments(db, parkingSpaceCollection, [
-//             Query.equal("name", data)
-//         ])
-//         const testData = response.documents[0]
+export async function POST(request: NextRequest){
+    try {        
+        const reqBody = await request.json()    
+        const {data} = reqBody // this is the text that is entered in the search field 
+        const params = new URLSearchParams({
+            addressdetails: "1",
+            q: data,
+            format: "jsonv2",
+            limit: "1"
+        })
         
-//         return NextResponse.json(
-//             {
-//                 data: testData
-//             },
-//             {
-//                 status: 200
-//             }
-//         )
+        const OSMResponse  = await fetch(`https://nominatim.openstreetmap.org/search?addressdetails=1&q=${params.toString()}`,{
+            headers:{
+                "User-Agent": "parkify-app/1.0 (aashishkumarrana17@gmail.com)"
+            }
+        })
 
-//     } catch (error: any) {
-//         return NextResponse.json(
-//         {
-//             message: error?.message || "there is an error while handling the search"
-//         },
-//         {
-//             status: error?.status || error?.code || 500
-//         }
-//     )
-//     }
-// }
+        const responseData = await OSMResponse.json()
+        console.log(responseData);
+        
+        const latitude = responseData[0].lat
+        const longitude = responseData[0].lon        
+
+        return NextResponse.json({
+            data: {latitude, longitude}
+            },
+            {
+            status: 200
+            }
+    )
+    
+    } catch (error: any) {
+        return NextResponse.json(
+        {
+            error: error
+        },
+        {
+            status: 500
+        })
+    }
+}

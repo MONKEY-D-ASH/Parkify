@@ -18,7 +18,7 @@ export default function Home() {
   const [isLoading, setIsLoading] = useState(false)
   const [space, setSpace] = useState({
     price_per_hour: 0,
-    availability_status: null,
+    availability_status: false,
     latitude: 48.8566,
     longitude: 2.3522
   })
@@ -43,18 +43,14 @@ export default function Home() {
     if (searchtext.length != 0) {
           try {
             setIsLoading(true)
-            const data = searchtext.toLowerCase().toString()
+            const data = searchtext.trim().toLowerCase().toString()
             const response = await axios.post("/api/search", {data})
-            console.log("search success", response.data);
             
-            // now store these details inside the localStorage of the browser and then extract those coordinates in the map component and then reload the page 
-            const {latitude, longitude, price_per_hour, availability_status } = response.data.data
-            // localStorage.setItem("searchData", JSON.stringify(response.data))
-            // setTriggerMap(prev => !prev)
+            const {latitude, longitude} = response.data.data
             setSpace({
-              price_per_hour: price_per_hour,
-              availability_status: availability_status,
-              latitude: latitude,
+              price_per_hour: 50,
+              availability_status: true,
+               latitude: latitude,
               longitude: longitude
             })
 
