@@ -12,7 +12,7 @@ import toast from 'react-hot-toast';
 const Map = dynamic(() => import("./map"), { ssr: false });
 
 export default function Home() {
-  const {logout} = useAuthStore()
+  const {setCurrentLocation} = useAuthStore()
   const [showpanel, setShowpanel] = useState(false)
   const [searchtext, setSearchtext] = useState("")
   const [isLoading, setIsLoading] = useState(false)
@@ -30,12 +30,12 @@ export default function Home() {
 
   const handleLogoutClick = async(e: React.MouseEvent<HTMLAnchorElement>) => {
     e.preventDefault()
-    const response = await logout()
-    if (response.error) {
-      toast.error(response.error!.message)
-    }else{
-      toast.success("logout success")
-    }
+    // const response = await logout()
+    // if (response.error) {
+    //   toast.error(response.error!.message)
+    // }else{
+    //   toast.success("logout success")
+    // }
   }
 
   const handleSearch = async() => {
@@ -65,16 +65,32 @@ export default function Home() {
   }
 
 
-  // the useEffect runs when this component get mounts, the window.onerror() catches any uncaught runtime error ( like appendchild of undefined) in the browser, if there is this handler will fire
-  // it first checks if there is a sessionStorage item named errorReloaded in the browser and it there is not then it will set that item and mark it as and then reload the window and return false to prevent the browser to prevent it default error handler so that we do not get to see the error on the screen 
   useEffect(() => {
-    const item = localStorage.getItem("auth")
-    if (item) {
-      const data = JSON.parse(item)
-      if (data.state.location) {
-        setSpace({...space, latitude : data.state.location.latitude, longitude : data.state.location.longitude})
+    // on loading the main webpage , grab the users current location and then save it inside the local storage of the browser and on clicking the book option save the booking  location also in the local storage and during confirm booking take those two locations and redirect the user to the google maps website and hit direction
+     if (!navigator.geolocation) {
+            console.log("Geolocation is not supported by your browser");
+            return;
+        }
+      const flag = localStorage.getItem("currentLocMounted")      
+      if (flag === "true") {
+        return;
       }
-    }
+    
+        // requesting the current location of the user 
+        navigator.geolocation.getCurrentPosition((position) => {
+            const latitude = position.coords.latitude;
+            const longitude = position.coords.longitude;
+    
+            console.log(latitude, longitude);
+            const data = {latitude, longitude}
+            setCurrentLocation(data)
+            // localStorage.setItem("currentLocation", JSON.stringify(data))
+            // localStorage.setItem("currentLocMounted", "true")
+        }),
+        
+        (error: any) => {
+            console.log(error);
+        }
     
     window.onerror = () => {
       // reload once after an error

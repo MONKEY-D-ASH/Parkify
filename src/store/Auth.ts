@@ -18,13 +18,18 @@ export interface UserPrefs {
 interface IAuthStore { 
     user: object | null
     hydrated: boolean
-    location: {
+    currentLocation: {
         latitude: number,
+        longitude: number;
+    } | null;
+    bookingLocation: {
+        latitude: number;
         longitude: number;
     } | null;
 
     setHydrated(): void;
-    setLocation(loc: {latitude: number , longitude: number}): void;
+    setCurrentLocation(loc: {latitude: number , longitude: number}): void;
+    setBookingLocation(loc: {latitude: number , longitude: number}): void;
     // verifySession(): Promise<void>;
 
     login(
@@ -67,16 +72,23 @@ export const useAuthStore = create<IAuthStore>()(
         immer((set) => ({
             user: null,
             hydrated: false,
-            location: null,
+            currentLocation: null,
+            bookingLocation: null,
 
             setHydrated(){
                 set({hydrated: true})
             },
 
             // this will set the current location of the user in the local storage and then you can use it from there to show the user on the map   
-            setLocation(loc){
+            setCurrentLocation(loc){
                 set((state) => {
-                    state.location = loc;
+                    state.currentLocation = loc;
+                })
+            },
+
+            setBookingLocation(loc){
+                set((state) => {
+                    state.bookingLocation = loc;
                 })
             },
             
