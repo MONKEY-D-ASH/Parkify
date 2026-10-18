@@ -47,11 +47,12 @@ export default function Home() {
             const response = await axios.post("/api/search", {data})
             
             const {latitude, longitude} = response.data.data
+            
             setSpace({
               price_per_hour: 50,
               availability_status: true,
-               latitude: latitude,
-              longitude: longitude
+              latitude: Number(latitude),
+              longitude: Number(longitude)
             })
 
           } catch (error: any) {
@@ -81,7 +82,6 @@ export default function Home() {
             const latitude = position.coords.latitude;
             const longitude = position.coords.longitude;
     
-            console.log(latitude, longitude);
             const data = {latitude, longitude}
             setCurrentLocation(data)
             // localStorage.setItem("currentLocation", JSON.stringify(data))
@@ -113,8 +113,8 @@ export default function Home() {
             <Image
             src="/images/list_icon_image.png" // the profile picture of the user will be displayed here 
             loading='eager'
-            width={500}
-            height={500}
+            width={510}
+            height={510}
             alt='list'
             />
           </div>

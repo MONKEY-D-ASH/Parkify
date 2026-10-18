@@ -30,6 +30,14 @@ const userSchema = new mongoose.Schema({
         enum: ["customer", "provider"],
         default: "customer"
     },
+    carId: {
+        type: Schema.Types.ObjectId,
+        ref: "Car"
+    },
+    spaceId: {
+        type: Schema.Types.ObjectId,
+        ref: "ParkingSpace"
+    },
     address: {
         type: String,
         required: true,

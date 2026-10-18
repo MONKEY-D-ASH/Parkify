@@ -73,7 +73,7 @@ export default function Map({space}: any) {
     const longitude = space.longitude
     const data = {latitude, longitude}    
     setBookingLocation(data)
-    // router.push("/booking")
+    router.push("/booking")
   }
 
   const position: [number, number] = [space.latitude, space.longitude]; // you have to provide the type definition of the position key element

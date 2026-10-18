@@ -12,10 +12,6 @@ const parkingSpaceSchema = new mongoose.Schema({
         type: String,
         required: [true, "Please provide a proper address of your parking space"]
     },
-    ownerId: {
-        type: Schema.Types.ObjectId,
-        ref: "User"
-    },
     latitude: {
         type: Number,
         required: true,

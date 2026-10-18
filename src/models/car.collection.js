@@ -1,10 +1,6 @@
 import mongoose from "mongoose"
 
 const carSchema = new mongoose.Schema({
-    userId: {
-        type: Schema.Types.ObjectId,
-        ref: "User"
-    },
     license_plate: {
         type: String,
         unique: true
