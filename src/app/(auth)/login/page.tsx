@@ -36,7 +36,7 @@ function LoginUser(){
                 router.push("/")
         }
         } catch (error: any) {
-            console.log("there is an error in user login or getting current location", error!.message);
+            console.log("there is an error in user login", error!.message);
             toast.error("login failed")
         }
         finally{

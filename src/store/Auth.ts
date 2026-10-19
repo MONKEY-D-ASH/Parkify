@@ -33,6 +33,7 @@ interface IAuthStore {
     setHydrated(): void;
     setCurrentLocation(loc: {latitude: number , longitude: number}): void;
     setBookingLocation(loc: {latitude: number , longitude: number}): void;
+    resetStore(): void;
     // verifySession(): Promise<void>;
     
 }
@@ -80,6 +81,16 @@ export const useAuthStore = create<IAuthStore>()(
             setBookingLocation(loc){
                 set((state) => {
                     state.bookingLocation = loc;
+                })
+            },
+
+            resetStore(){
+                set((state) => {
+                    state.user = null,
+                    state.userCar = null,
+                    state.hydrated = false,
+                    state.currentLocation = null,
+                    state.bookingLocation = null
                 })
             },
         })),

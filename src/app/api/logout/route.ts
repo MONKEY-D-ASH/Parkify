@@ -20,8 +20,8 @@ export async function GET(request: NextRequest){
         if (!user) {
             throw new ApiError(400, "User not found")
         }
-
-        
+        user.refreshToken = ""
+        await user.save()
 
         return NextResponse.json({
             message: "Logout Successful",

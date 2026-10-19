@@ -7,12 +7,14 @@ import Link from 'next/link';
 import axios from "axios"
 import { useAuthStore } from '@/store/Auth';
 import toast from 'react-hot-toast';
+import { useRouter } from 'next/navigation';
 
 // the loading = 'eager' is to load the image instantly at the time of page render
 const Map = dynamic(() => import("./map"), { ssr: false });
 
 export default function Home() {
-  const {setCurrentLocation} = useAuthStore()
+  const {setCurrentLocation, resetStore} = useAuthStore()
+  const router = useRouter()
   const [showpanel, setShowpanel] = useState(false)
   const [searchtext, setSearchtext] = useState("")
   const [isLoading, setIsLoading] = useState(false)
@@ -32,6 +34,11 @@ export default function Home() {
     e.preventDefault()
     try {
       const response = await axios.get("./api/logout")
+      if (response.data.success) {
+        resetStore()
+        toast.success("Logout success")
+        router.push("/")
+      }
     } catch (error: any) {
       console.log("There is an error in logout", error!.message);
       toast.error("Logout failed")
