@@ -1,6 +1,5 @@
 "use client"
 
-import { useAuthStore } from "@/store/Auth"
 import React from "react"
 import { Input } from "@/components/ui/input"
 import {
@@ -18,7 +17,7 @@ import axios from "axios"
 // this is the signup page where we will register the user and create an account for him for which we are using the createAccount() method in we defined in the useAuthStore react hook created using zustand
 // in the handleSubmit function we are explicitly defining which type of event is gonna trigger this async function which is a reactFormEvent and that too of an HTMLFormElement and we are preventing the obvious default event which is to reload the web page dom structure
 
-function SignupPage(){
+function RegistrationPage(){
     const router = useRouter()
     const [isLoading, setIsLoading] = React.useState(false)
     const [formData, setFormData] = React.useState({
@@ -27,11 +26,15 @@ function SignupPage(){
         email: "",
         password: "",
         phoneNumber: "",
-        role: "customer",
-        address: ""
+        role: "",
+        address: "",
+        license: "",
+        carModel: "",
+        carColor: "",
+        carType: ""
     })
 
-    const handleSubmit = async(e: React.MouseEvent<HTMLButtonElement>) => {
+    const handleUserRegistration = async(e: React.MouseEvent<HTMLButtonElement>) => {
         e.preventDefault()
 
         // validate data
@@ -41,7 +44,7 @@ function SignupPage(){
         }
 
         // call the store 
-        if (formData.firstname.length !== 0 && formData.lastname.length !== 0 && formData.email.length !== 0 && formData.password.length !== 0 && formData.phoneNumber.length !== 0 && formData.address.length !== 0) {
+        if (formData.firstname.length !== 0 && formData.lastname.length !== 0 && formData.email.length !== 0 && formData.password.length !== 0 && formData.phoneNumber.length !== 0 && formData.address.length !== 0 && formData.license.length !== 0 && formData.carModel.length !== 0 && formData.carColor.length !== 0 && formData.carType.length !== 0) {
             setIsLoading(true) // to show the user that we are processing and creating the account 
             const data = {
                 username:`${formData.firstname} ${formData.lastname}`,
@@ -49,10 +52,15 @@ function SignupPage(){
                 password: formData.password,
                 phoneNumber: formData.phoneNumber,
                 role: formData.role,
-                address: formData.address
+                address: formData.address,
+                license: formData.license,
+                carModel: formData.carModel,
+                carColor: formData.carColor,
+                carType: formData.carType
             }
             try {
-                const response = await axios.post("./api/signup", data)
+                const response = await axios.post("./api/registerUser", data)
+                console.log(response);
                 toast.success("user account created successfully")
                 setIsLoading(false) // to show the user that the account has been created successfully 
                 router.push("/") // this will push the user to the home page
@@ -72,7 +80,7 @@ function SignupPage(){
     <div className="flex justify-center items-center flex-col h-3vh bg-gray-700">
 
         
-        <h1 className="text-white m-2 p-3 text-3xl">{isLoading? "processing..." : "Sign Up"}</h1>
+        <h1 className="text-white m-2 p-3 text-3xl">{isLoading? "processing..." : "Registration"}</h1>
             <div className=" bg-black w-100 h-3vh p-2 rounded-lg">
                     <FieldGroup>
                     <Field>
@@ -143,7 +151,7 @@ function SignupPage(){
                     </Field>
 
                     <Field>
-                        <FieldLabel htmlFor="fieldgroup-role" className="text-white">Role</FieldLabel>
+                        <FieldLabel htmlFor="fieldgroup-role" className="text-white">Role: {formData.role}</FieldLabel>
                         <Button
                         id="fieldgroup-role"
                         variant="outline"
@@ -173,20 +181,90 @@ function SignupPage(){
                         />
                     </Field>
 
+                    <Field>
+                        <FieldLabel htmlFor="fieldgroup-license-plate" className="text-white">Vehicle License Plate</FieldLabel>
+                        <Input
+                        className="text-white"
+                        id="fieldgroup-license-plate"
+                        type="text"
+                        placeholder="Enter you license plate number"
+                        required
+                        value={formData.license}
+                        onChange={(e) => setFormData({...formData, license:e.target.value })}
+                        />
+                    </Field>
+
+                    <Field>
+                        <FieldLabel htmlFor="fieldgroup-vehicle-model" className="text-white">Vehicle model</FieldLabel>
+                        <Input
+                        className="text-white"
+                        id="fieldgroup-vehicle-model"
+                        type="text"
+                        placeholder="Enter your vehicle model"
+                        required
+                        value={formData.carModel}
+                        onChange={(e) => setFormData({...formData, carModel:e.target.value })}
+                        />
+                    </Field>
+
+                    <Field>
+                        <FieldLabel htmlFor="fieldgroup-vehicle-color" className="text-white">Vehicle color</FieldLabel>
+                        <Input
+                        className="text-white"
+                        id="fieldgroup-vehicle-color"
+                        type="text"
+                        placeholder="Enter your vehicle color"
+                        required
+                        value={formData.carColor}
+                        onChange={(e) => setFormData({...formData, carColor:e.target.value })}
+                        />
+                    </Field>
+
+                    <Field>
+                        <FieldLabel htmlFor="fieldgroup-vehicle-type" className="text-white">Vehicle Type: {formData.carType}</FieldLabel>
+                        <Button
+                        id="fieldgroup-vehicle-type"
+                        variant="outline"
+                        className="text-white"
+                        onClick={() => setFormData({...formData, carType:"sedan"})}
+                        >sedan</Button>
+
+                        <Button
+                        variant="outline"
+                        id="fieldgroup-vehicle-type"
+                        className="text-white bg-green-700"
+                        onClick={() => setFormData({...formData, carType:"suv"})}
+                        >suv</Button>
+
+                        <Button
+                        variant="outline"
+                        id="fieldgroup-vehicle-type"
+                        className="text-white bg-green-700"
+                        onClick={() => setFormData({...formData, carType:"hatchback"})}
+                        >hatchback</Button>
+
+                        <Button
+                        variant="outline"
+                        id="fieldgroup-vehicle-type"
+                        className="text-white bg-green-700"
+                        onClick={() => setFormData({...formData, carType:"luxury"})}
+                        >luxury</Button>
+                    </Field>
+
+
                     <Field orientation="horizontal">
                         <Button 
                         type="reset" 
-                        variant="outline" 
-                        className="text-white"
-                        onClick={() => setFormData({firstname: "", lastname: "", email: "", password: "", phoneNumber: "", role: "", address: ""})}
-                        >Reset
+                        className="text-white bg-blue-600 hover:bg-blue-500"
+                        onClick={() => setFormData({firstname: "", lastname: "", email: "", password: "", phoneNumber: "", role: "", address: "", license: "", carModel: "", carColor: "", carType: ""})}
+                        >Reset Fields
                         </Button>
 
                         <Button 
                         type="submit" 
-                        className="text-white bg-gray-500 hover:bg-gray-800"
-                        onClick={handleSubmit}
-                        >Submit
+                        className="text-white bg-green-600 hover:bg-green-500"
+                        onClick={handleUserRegistration}
+                        >Register User
                         </Button>
                     </Field>    
                     </FieldGroup>
@@ -195,4 +273,4 @@ function SignupPage(){
     )
 }
 
-export default SignupPage
+export default RegistrationPage

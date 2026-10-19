@@ -30,12 +30,12 @@ export default function Home() {
 
   const handleLogoutClick = async(e: React.MouseEvent<HTMLAnchorElement>) => {
     e.preventDefault()
-    // const response = await logout()
-    // if (response.error) {
-    //   toast.error(response.error!.message)
-    // }else{
-    //   toast.success("logout success")
-    // }
+    try {
+      const response = await axios.get("./api/logout")
+    } catch (error: any) {
+      console.log("There is an error in logout", error!.message);
+      toast.error("Logout failed")
+    }
   }
 
   const handleSearch = async() => {
@@ -84,8 +84,6 @@ export default function Home() {
     
             const data = {latitude, longitude}
             setCurrentLocation(data)
-            // localStorage.setItem("currentLocation", JSON.stringify(data))
-            // localStorage.setItem("currentLocMounted", "true")
         }),
         
         (error: any) => {
@@ -176,7 +174,7 @@ export default function Home() {
       </div>
 
       <div className='absolute right-5 top-5 bg-white px-2 py-1 rounded-md hover:bg-gray-200'>
-        <Link href="./signup">Sign up</Link>
+        <Link href="./registerUser">Register</Link>
       </div>
 
     </div>

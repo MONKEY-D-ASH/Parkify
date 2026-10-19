@@ -31,11 +31,11 @@ const userSchema = new mongoose.Schema({
         default: "customer"
     },
     carId: {
-        type: Schema.Types.ObjectId,
+        type: mongoose.Schema.Types.ObjectId,
         ref: "Car"
     },
     spaceId: {
-        type: Schema.Types.ObjectId,
+        type: mongoose.Schema.Types.ObjectId,
         ref: "ParkingSpace"
     },
     address: {

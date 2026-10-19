@@ -15,7 +15,7 @@ import toast from "react-hot-toast";
 import { useRouter } from "next/navigation";
 
 function LoginUser(){
-    const {login, setLocation} = useAuthStore()
+    const {setUserDetails, setUserCarDetails} = useAuthStore()
     const [user, setUser] = React.useState({
         email: "",
         password: ""
@@ -23,29 +23,16 @@ function LoginUser(){
     const [isLoading, setIsLoading] = React.useState(false)
     const router = useRouter()
 
-    const handleClick = async(e : React.MouseEvent<HTMLButtonElement>) => {
+    // call the backend login route and then get the user details and the user's car details and then set them in the zustand store 
+    const handleLoginClick = async(e : React.MouseEvent<HTMLButtonElement>) => {
         e.preventDefault()
         try {
             if (user.email.length !== 0 && user.password.length !== 0) {
                 setIsLoading(true)
-                const loginResponse = await axios.post("./api/login", user)
+                const response = await axios.post("./api/login", user)
+                setUserDetails(response.data.user)
+                setUserCarDetails(response.data.userCar)
                 toast.success("login success") 
-
-            //     if (!navigator.geolocation) {
-            //             throw new Error("Geolocation is not supported by your browser");
-            //     }
-            //     // requesting the current location of the user 
-            //     navigator.geolocation.getCurrentPosition((position) => {
-            //         const latitude = position.coords.latitude;
-            //         const longitude = position.coords.longitude;
-            //         const data = {latitude, longitude}
-            //         setLocation(data)
-            //     },
-                
-            //     (error: any) => {
-            //         console.log("there is an error in getting current location",error);
-            //     }
-            // )
                 router.push("/")
         }
         } catch (error: any) {
@@ -94,12 +81,12 @@ function LoginUser(){
                 variant="outline" 
                 className="text-white"
                 onClick={() => setUser({email:"", password:""})}
-                >Reset
+                >Reset fields
                 </Button>
 
-                <Button type="submit" className="text-white bg-gray-500 hover:bg-gray-800"
-                onClick={handleClick}
-                >Submit
+                <Button type="submit" className="text-white bg-green-600 hover:bg-green-500"
+                onClick={handleLoginClick}
+                >Login
                 </Button>
             </Field>
             

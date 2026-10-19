@@ -17,6 +17,7 @@ export interface UserPrefs {
 // this is just for type safety during the complile time and provide structure and could also be skipped in case of javascript 
 interface IAuthStore { 
     user: object | null
+    userCar: object | null
     hydrated: boolean
     currentLocation: {
         latitude: number,
@@ -27,37 +28,13 @@ interface IAuthStore {
         longitude: number;
     } | null;
 
+    setUserDetails(user: object): void;
+    setUserCarDetails(car: object): void;
     setHydrated(): void;
     setCurrentLocation(loc: {latitude: number , longitude: number}): void;
     setBookingLocation(loc: {latitude: number , longitude: number}): void;
     // verifySession(): Promise<void>;
-
-    login(
-        email: string,
-        password: string
-    ): Promise<
-    {
-        success: boolean; 
-        error?: string | null
-    }>
-
-    createAccount(
-        username: string,
-        email: string,
-        password: string,
-        phoneNumber: string,
-        role: string,
-        address: string
-    ): Promise<
-    {
-        success: boolean;
-        error?: string | null
-    }>
-
-    logout(): Promise<{
-        success:boolean;
-        error?: AppwriteException | null;
-    }>;
+    
 }
 
 // The create function in Zustand initializes a global state store and returns a custom React (((hook))) that components use to read state and trigger actions. It allows you to manage application state externally without needing a context Provider.
@@ -71,15 +48,29 @@ export const useAuthStore = create<IAuthStore>()(
     persist(
         immer((set) => ({
             user: null,
+            userCar: null,
             hydrated: false,
             currentLocation: null,
             bookingLocation: null,
 
-            setHydrated(){
-                set({hydrated: true})
+            setUserDetails(user){
+                set((state) => {
+                    state.user = user
+                })
             },
 
-            // this will set the current location of the user in the local storage and then you can use it from there to show the user on the map   
+            setUserCarDetails(car){
+                set((state) => {
+                    state.userCar = car
+                })
+            },
+
+            setHydrated(){
+                set((state) => {
+                    state.hydrated = true
+                })
+            },
+  
             setCurrentLocation(loc){
                 set((state) => {
                     state.currentLocation = loc;
@@ -91,68 +82,8 @@ export const useAuthStore = create<IAuthStore>()(
                     state.bookingLocation = loc;
                 })
             },
-            
-            // // this verify session is crucial as suppose the user logs in the application and a valid session is created and is stored inside the zustand store and then the user closes the browser and comes back tomorrow and then we run this verifySession so that if the yesterday session is still valid then it returns that session data object and sets the session state otherwise if the session is expired then it throws an error 
-            // async verifySession(){
-            //     try {
-            //         const session = await account.getSession("current") 
-            //         set({session})
-            //     } catch (error) {
-            //         console.log(error);
-            //     }
-            // },
-
-            async login(email: string, password: string){
-                try {
-                    console.log("attempting login");
-                    const data = {email, password}
-                    const response = await axios.post("./api/login",data)
-                    set((state) => {
-                        state.user = response.data.user
-                    })
-                    return {success: true}
-                } catch (error: any) {
-                    console.log("there is any error in auth.js while login", error);
-                    return{
-                        success: false,
-                        error: error? error.data.error : null
-                    }
-                }
-            },
-
-            async createAccount(username: string, email: string, password: string, phoneNumber: string, role: string, address: string){
-                try {
-                    console.log("enter the createAccount method in authStore");
-
-                    const data = {username, email, password, phoneNumber, role, address}
-                    const response = await axios.post("./api/signup", data)
-                    // you can fire a account.createVerification(url) method to send the user a verify email which will send the user to the given link and then you can extract the params like userId and secret from the query parameters and then you can set the isVerified field in the user document to true to finish the process
-                    console.log("account created successfully in authStore");
-                    
-                    return {success: true}
-                } catch (error: any) {
-                    console.log("There is an error in auth.js while creating user account",error);
-                    return {
-                        success: false,
-                        error: error.response?.data?.error || null 
-                    }
-                }
-            },  
-
-            async logout(){
-                try {
-                    const response  = await axios.get("./api/logout")
-                    // what you have to simply do is remove the refreshToken from the user document so no furthur accessToken can be generated from it 
-                    return {success: true,}
-                } catch (error) {
-                    console.log(error);
-                    return {
-                        success: false,
-                        error: error instanceof AppwriteException ? error : null
-                    }
-                }
-            }
         })),
+
         {
             name: "auth",
             onRehydrateStorage(){

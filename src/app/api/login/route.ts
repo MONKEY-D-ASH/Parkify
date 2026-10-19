@@ -4,6 +4,7 @@ import { NextRequest, NextResponse } from "next/server";
 import bcrypt from "bcryptjs"
 import jwt from "jsonwebtoken"
 import { ApiError } from "next/dist/server/api-utils";
+import Car from "@/models/car.collection";
 
 connect()
 
@@ -30,21 +31,27 @@ export async function POST(request: NextRequest){
         // check if user exists or not 
         const user = await User.findOne({email})
         if(!user){
-            return NextResponse.json({error: "User does not exist"}, {status: 400})
+            throw new ApiError(400, "User does not exist")
+        }
+
+        // check if the user car exists or not 
+        const userCar = await Car.findById(user.carId)
+        if(!userCar){
+            throw new ApiError(400, "User car does not exist")
         }
         
         // check if the password is correct or not 
         const isPasswordCorrect = await bcrypt.compare(password, user.password)
 
         if(!isPasswordCorrect){
-            return NextResponse.json({error: "The password is incorrect"}, {status: 430})
+            throw new ApiError(400, "The password is incorrect")
         }
         
         // generate the access and the refresh token and encrypting them and storing them inside the browser cookies 
         // create token data
         const { accessToken, refreshToken } = await generateAccessAndRefreshTokens(user._id)
         
-        const loggedInUser = await User.findById(user._id).select("-password -refreshToken -forgotPasswordToken -forgotPasswordTokenExpiry -verifyToken -verifyTokenExpiry")
+        const loggedInUser = await User.findById(user._id).select("-password -refreshToken -forgotPasswordToken -forgotPasswordTokenExpiry -verifyToken -verifyTokenExpiry -carId -spaceId")
         if (!loggedInUser) {
             throw new ApiError(404, "Logged In user not found")
         }
@@ -53,7 +60,8 @@ export async function POST(request: NextRequest){
         const response = NextResponse.json({
             message: "Login successful",
             success: true,
-            user: loggedInUser
+            user: loggedInUser,
+            userCar: userCar
         }) 
         // we are setting the cookies on the browser and this method takes three paramters: name, value and options   
         response.cookies.set("accessToken", accessToken, {
@@ -67,7 +75,9 @@ export async function POST(request: NextRequest){
         return response;
 
     } catch (error : any) {
-        return NextResponse.json({error: error.message}, {status: 500})
+        const status  = error instanceof ApiError? error.statusCode : 500
+        const message = error instanceof ApiError? error.message : "Internal Server Error"
+        return NextResponse.json({error: message}, {status: status})
     }
 }
 
