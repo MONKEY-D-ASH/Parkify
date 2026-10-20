@@ -42,9 +42,10 @@ function Recenter({latitude, longitude}: {latitude: number, longitude: number}){
 //   }
 
 // we are passing an array of locations data from the page.tsx file to this map.tsx file which is fetched in the page.tsx file using an api call and now these location data will be destructured here to display the different markers on the map and inside the popup we will display the details about the location which is also extracted from the location object 
-export default function Map({space}: any) {
+export default function Map({space}: any ) {
   const router = useRouter()
-  const {setBookingLocation} = useAuthStore()
+  const setBookingLocation = useAuthStore((state) => state.setBookingLocation)
+  const locations = useAuthStore((state) => state.displayLocations)
   const [marker, setMarker] = useState()
   // const [currentSpace, setCurrentSpace] = useState({
   //   latitude: 5.1243,
@@ -76,7 +77,13 @@ export default function Map({space}: any) {
     router.push("/booking")
   }
 
-  const position: [number, number] = [space.latitude, space.longitude]; // you have to provide the type definition of the position key element
+  const position: [number, number] = [space.latitude, space.longitude]; // you have to provide the type definition of the position key element  
+  const position_1: [number, number] = [locations!.position_1.latitude, locations!.position_1.longitude ]
+  const position_2: [number, number] = [locations!.position_2.latitude, locations!.position_2.longitude ]
+  const position_3: [number, number] = [locations!.position_3.latitude, locations!.position_3.longitude ]
+  const position_4: [number, number] = [locations!.position_4.latitude, locations!.position_4.longitude ]
+  const position_5: [number, number] = [locations!.position_5.latitude, locations!.position_5.longitude ]
+
   // use the popup component to show the details about the site with the parking slot
   return (   
     <MapContainer
@@ -92,7 +99,75 @@ export default function Map({space}: any) {
         url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
       />
 
-      <Marker position={position} >
+      <Marker position={position_1} >
+      <Popup> 
+        <div className='bg-blue-700 p-2 text-white rounded-md m-1'>
+          price: ${space.price_per_hour}.
+        </div> 
+        <div className='bg-blue-700 p-2 text-white rounded-md m-1'>
+         available: {space.availability_status ? `Yes` : `No`}.
+        </div>
+        <div>
+          <button 
+          className='bg-green-500 hover:bg-green-600 p-2 text-white rounded-md m-1'
+          onClick={handleaBookingClick}
+          >book</button>
+        </div>
+      </Popup>
+      </Marker>
+
+      <Marker position={position_2} >
+      <Popup> 
+        <div className='bg-blue-700 p-2 text-white rounded-md m-1'>
+          price: ${space.price_per_hour}.
+        </div> 
+        <div className='bg-blue-700 p-2 text-white rounded-md m-1'>
+         available: {space.availability_status ? `Yes` : `No`}.
+        </div>
+        <div>
+          <button 
+          className='bg-green-500 hover:bg-green-600 p-2 text-white rounded-md m-1'
+          onClick={handleaBookingClick}
+          >book</button>
+        </div>
+      </Popup>
+      </Marker>
+
+      <Marker position={position_3} >
+      <Popup> 
+        <div className='bg-blue-700 p-2 text-white rounded-md m-1'>
+          price: ${space.price_per_hour}.
+        </div> 
+        <div className='bg-blue-700 p-2 text-white rounded-md m-1'>
+         available: {space.availability_status ? `Yes` : `No`}.
+        </div>
+        <div>
+          <button 
+          className='bg-green-500 hover:bg-green-600 p-2 text-white rounded-md m-1'
+          onClick={handleaBookingClick}
+          >book</button>
+        </div>
+      </Popup>
+      </Marker>
+
+      <Marker position={position_4} >
+      <Popup> 
+        <div className='bg-blue-700 p-2 text-white rounded-md m-1'>
+          price: ${space.price_per_hour}.
+        </div> 
+        <div className='bg-blue-700 p-2 text-white rounded-md m-1'>
+         available: {space.availability_status ? `Yes` : `No`}.
+        </div>
+        <div>
+          <button 
+          className='bg-green-500 hover:bg-green-600 p-2 text-white rounded-md m-1'
+          onClick={handleaBookingClick}
+          >book</button>
+        </div>
+      </Popup>
+      </Marker>
+
+      <Marker position={position_5} >
       <Popup> 
         <div className='bg-blue-700 p-2 text-white rounded-md m-1'>
           price: ${space.price_per_hour}.

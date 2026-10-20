@@ -13,17 +13,28 @@ import { useRouter } from 'next/navigation';
 const Map = dynamic(() => import("./map"), { ssr: false });
 
 export default function Home() {
-  const {setCurrentLocation, resetStore} = useAuthStore()
+  const {setCurrentLocation, resetStore, setDisplayLocations} = useAuthStore()
   const router = useRouter()
   const [showpanel, setShowpanel] = useState(false)
   const [searchtext, setSearchtext] = useState("")
   const [isLoading, setIsLoading] = useState(false)
+  const generateRandomNumber = () => {
+    return Math.random() * (0.03-0.01) + 0.01
+  }
   const [space, setSpace] = useState({
     price_per_hour: 0,
     availability_status: false,
     latitude: 48.8566,
-    longitude: 2.3522
+    longitude: 2.3522,
+    
   })
+  // const [locs, setLocs] = useState({
+  //   positon_1: [0,0],
+  //   positon_2: [0,0],
+  //   positon_3: [0,0],
+  //   positon_4: [0,0],
+  //   positon_5: [0,0],
+  // })
 
   const handleClick = () => {
     setShowpanel(!showpanel);
@@ -45,6 +56,8 @@ export default function Home() {
     }
   }
 
+  
+
   const handleSearch = async() => {
     // this will make an api call using the text that is provided inside the search box and that api will make a database call and search for the parking space near the entered location and will return the latitude and longitude of those locations which will be rendered on the map  
     if (searchtext.length != 0) {
@@ -52,15 +65,21 @@ export default function Home() {
             setIsLoading(true)
             const data = searchtext.trim().toLowerCase().toString()
             const response = await axios.post("/api/search", {data})
-            
             const {latitude, longitude} = response.data.data
-            
             setSpace({
               price_per_hour: 50,
               availability_status: true,
               latitude: Number(latitude),
               longitude: Number(longitude)
             })
+          const displayLocations = {
+            position_1: {latitude: space.latitude + generateRandomNumber(), longitude: space.longitude + generateRandomNumber()},
+            position_2: {latitude: space.latitude + generateRandomNumber(), longitude: space.longitude + generateRandomNumber()},
+            position_3: {latitude: space.latitude + generateRandomNumber(), longitude: space.longitude + generateRandomNumber()},
+            position_4: {latitude: space.latitude + generateRandomNumber(), longitude: space.longitude + generateRandomNumber()},
+            position_5: {latitude: space.latitude + generateRandomNumber(), longitude: space.longitude + generateRandomNumber()},
+          }
+            setDisplayLocations(displayLocations)
 
           } catch (error: any) {
             console.log(error);
@@ -75,6 +94,14 @@ export default function Home() {
 
   useEffect(() => {
     // on loading the main webpage , grab the users current location and then save it inside the local storage of the browser and on clicking the book option save the booking  location also in the local storage and during confirm booking take those two locations and redirect the user to the google maps website and hit direction
+    const displayLocations = {
+            position_1: {latitude: space.latitude + generateRandomNumber(), longitude: space.longitude + generateRandomNumber()},
+            position_2: {latitude: space.latitude + generateRandomNumber(), longitude: space.longitude + generateRandomNumber()},
+            position_3: {latitude: space.latitude + generateRandomNumber(), longitude: space.longitude + generateRandomNumber()},
+            position_4: {latitude: space.latitude + generateRandomNumber(), longitude: space.longitude + generateRandomNumber()},
+            position_5: {latitude: space.latitude + generateRandomNumber(), longitude: space.longitude + generateRandomNumber()},
+          }
+            setDisplayLocations(displayLocations)
      if (!navigator.geolocation) {
             console.log("Geolocation is not supported by your browser");
             return;

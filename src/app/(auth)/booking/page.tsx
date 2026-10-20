@@ -14,7 +14,7 @@ import Link from "next/link";
 
 function BookSpace(){
 
-    const {currentLocation, bookingLocation} = useAuthStore()
+    const {currentLocation, bookingLocation, displayLocations} = useAuthStore()
 
     const handleBookSpaceClick = (e: React.MouseEvent<HTMLButtonElement>) => {
         // this function here will extract the coordinates of the current and the destination location form the zustand store and will make a url request to the google maps for the direction 

@@ -33,12 +33,8 @@ export async function proxy(request: NextRequest) {
 // here define all the routes where you want to run the middleware and in the above code 
 export const config = {
   matcher: [
-    '/',
-    '/logout',
     '/booking',
-    '/login',
     '/profile',
-    '/registerUser',
     '/space-registration',
   ],
 }
