@@ -25,10 +25,11 @@ export async function POST(request: NextRequest){
         console.log(responseData);
         
         const latitude = responseData[0].lat
-        const longitude = responseData[0].lon        
+        const longitude = responseData[0].lon
+        const name = responseData[0].name     
 
         return NextResponse.json({
-            data: {latitude, longitude}
+            data: {latitude, longitude,name}
             },
             {
             status: 200

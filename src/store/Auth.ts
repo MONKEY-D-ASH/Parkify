@@ -34,9 +34,10 @@ interface IAuthStore {
         latitude: number,
         longitude: number;
     } | null;
-    bookingLocation: {
+    bookingLocationDetails: {
         latitude: number;
         longitude: number;
+        name: string;
     } | null;
     displayLocations: DisplayLocations | null
 
@@ -44,7 +45,7 @@ interface IAuthStore {
     setUserCarDetails(car: object): void;
     setHydrated(): void;
     setCurrentLocation(loc: {latitude: number , longitude: number}): void;
-    setBookingLocation(loc: {latitude: number , longitude: number}): void;
+    setBookingLocation(loc: {latitude: number , longitude: number, name: string}): void;
     setDisplayLocations(locs: DisplayLocations): void;
     resetStore(): void;
     // verifySession(): Promise<void>;
@@ -65,7 +66,7 @@ export const useAuthStore = create<IAuthStore>()(
             userCar: null,
             hydrated: false,
             currentLocation: null,
-            bookingLocation: null,
+            bookingLocationDetails: null,
             displayLocations: null,
 
             setUserDetails(user){
@@ -94,7 +95,7 @@ export const useAuthStore = create<IAuthStore>()(
 
             setBookingLocation(loc){
                 set((state) => {
-                    state.bookingLocation = loc;
+                    state.bookingLocationDetails = loc;
                 })
             },
 
@@ -110,7 +111,7 @@ export const useAuthStore = create<IAuthStore>()(
                     state.userCar = null,
                     state.hydrated = false,
                     state.currentLocation = null,
-                    state.bookingLocation = null
+                    state.bookingLocationDetails = null
                 })
             },
         })),

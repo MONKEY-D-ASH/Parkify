@@ -13,9 +13,8 @@ import { useAuthStore } from "@/store/Auth";
 import Link from "next/link";
 
 function BookSpace(){
-
-    const {currentLocation, bookingLocation, displayLocations} = useAuthStore()
-
+    const currentLocation = useAuthStore((state) => state.currentLocation)
+    const bookingLocation = useAuthStore((state) => state.bookingLocationDetails)
     const handleBookSpaceClick = (e: React.MouseEvent<HTMLButtonElement>) => {
         // this function here will extract the coordinates of the current and the destination location form the zustand store and will make a url request to the google maps for the direction 
         e.preventDefault()
@@ -26,12 +25,24 @@ function BookSpace(){
     return (
     <div className="flex justify-center items-center flex-col h-lvh bg-gray-700">
         <h1 className="text-white m-2 p-3 text-3xl ">Book Space</h1>
-        <div className=" bg-black w-100 h-100 p-2 rounded-lg">
+        <div className=" bg-black w-100 h-lvh p-2 rounded-lg">
 
             <FieldGroup>
             <Field>
-                <FieldLabel htmlFor="fieldgroup-name" className="text-white">Display the name of the parking space here</FieldLabel>
-                <FieldLabel htmlFor="fieldgroup-Date&Time" className="text-white">take inputs of the start and the end time of the booking form the user</FieldLabel>
+                <FieldLabel htmlFor="fieldgroup-name" className="text-white">Name: {bookingLocation?.name}</FieldLabel>
+                <FieldLabel htmlFor="fieldgroup-Date&Time:arrival" className="text-white">Set you arrival Time</FieldLabel>
+                <Input
+                id="fieldgroup-Date&Time:arrival"
+                type="time"
+                placeholder="set arrival time"
+                />
+                <FieldLabel htmlFor="fieldgroup-Date&Time:departure" className="text-white">Set you Departure Time</FieldLabel>
+                <Input
+                id="fieldgroup-Date&Time:departure"
+                type="time"
+                placeholder="set departure time"
+                />
+
                 <FieldLabel htmlFor="fieldgroup-vehicle details" className="text-white">Display the details of the vehicle here like license plate and car type</FieldLabel>
                 <FieldLabel htmlFor="fieldgroup-contactInfo" className="text-white">Display the contact details of the user</FieldLabel>
                 

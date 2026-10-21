@@ -26,6 +26,7 @@ export default function Home() {
     availability_status: false,
     latitude: 48.8566,
     longitude: 2.3522,
+    name: "your location"
     
   })
   // const [locs, setLocs] = useState({
@@ -65,12 +66,13 @@ export default function Home() {
             setIsLoading(true)
             const data = searchtext.trim().toLowerCase().toString()
             const response = await axios.post("/api/search", {data})
-            const {latitude, longitude} = response.data.data
+            const {latitude, longitude, name} = response.data.data
             setSpace({
               price_per_hour: 50,
               availability_status: true,
               latitude: Number(latitude),
-              longitude: Number(longitude)
+              longitude: Number(longitude),
+              name:name,
             })
           const displayLocations = {
             position_1: {latitude: space.latitude + generateRandomNumber(), longitude: space.longitude + generateRandomNumber()},
