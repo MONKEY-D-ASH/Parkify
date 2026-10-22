@@ -33,7 +33,7 @@ function Recenter({latitude, longitude}: {latitude: number, longitude: number}){
 // we are passing an array of locations data from the page.tsx file to this map.tsx file which is fetched in the page.tsx file using an api call and now these location data will be destructured here to display the different markers on the map and inside the popup we will display the details about the location which is also extracted from the location object 
 export default function Map({space}: any ) {
   const router = useRouter()
-  const setBookingLocation = useAuthStore((state) => state.setBookingLocation)
+  const setBookingLocationDetails = useAuthStore((state) => state.setBookingLocationDetails)
   const locations = useAuthStore((state) => state.displayLocations)
   const [marker, setMarker] = useState()
   
@@ -44,8 +44,10 @@ export default function Map({space}: any ) {
     const latitude  = space.latitude
     const longitude = space.longitude
     const name = space.name
-    const data = {latitude, longitude, name}    
-    setBookingLocation(data)
+    const price_per_hour = space.price_per_hour
+    const availability_status = space.availability_status
+    const data = {name, price_per_hour, availability_status, latitude, longitude}    
+    setBookingLocationDetails(data)
     router.push("/booking")
   }
 

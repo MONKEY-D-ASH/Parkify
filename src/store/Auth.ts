@@ -15,37 +15,56 @@ export interface UserPrefs {
 // It specifies exactly what properties and methods an object must have, along with their data types, without providing any actual implementation logic.
 // here we are defining an object called the IAuthStore in which we are defining the things we required to authenticate the user and also the methods to implement them, we are also planning for the type safety by providing an alternative for the vairables as null
 // this is just for type safety during the complile time and provide structure and could also be skipped in case of javascript 
-interface coordinate {
+interface Coordinate {
     latitude: number,
     longitude: number;
 }
+
+interface User {
+    address: string;
+    email: string;
+    isVerified: boolean;
+    phoneNumber: string;
+    role: string;
+    username: string;
+}
+interface Car {
+    carColor: string;
+    carModel: string;
+    carType: string;
+    license: string;
+}
 interface DisplayLocations {
-    position_1:coordinate;
-    position_2:coordinate;
-    position_3:coordinate;
-    position_4:coordinate;
-    position_5:coordinate;
+    position_1:Coordinate;
+    position_2:Coordinate;
+    position_3:Coordinate;
+    position_4:Coordinate;
+    position_5:Coordinate;
+}
+
+interface BookingLocationDetails {
+    name: string;
+    price_per_hour: number;
+    availability_status: boolean;
+    latitude: number;
+    longitude: number;
 }
 interface IAuthStore { 
-    user: object | null
-    userCar: object | null
+    user: User | null
+    userCar: Car | null
     hydrated: boolean
     currentLocation: {
         latitude: number,
         longitude: number;
     } | null;
-    bookingLocationDetails: {
-        latitude: number;
-        longitude: number;
-        name: string;
-    } | null;
+    bookingLocationDetails: BookingLocationDetails | null;
     displayLocations: DisplayLocations | null
 
-    setUserDetails(user: object): void;
-    setUserCarDetails(car: object): void;
+    setUserDetails(user: User): void;
+    setUserCarDetails(car: Car): void;
     setHydrated(): void;
     setCurrentLocation(loc: {latitude: number , longitude: number}): void;
-    setBookingLocation(loc: {latitude: number , longitude: number, name: string}): void;
+    setBookingLocationDetails(loc: BookingLocationDetails): void;
     setDisplayLocations(locs: DisplayLocations): void;
     resetStore(): void;
     // verifySession(): Promise<void>;
@@ -93,7 +112,7 @@ export const useAuthStore = create<IAuthStore>()(
                 })
             },
 
-            setBookingLocation(loc){
+            setBookingLocationDetails(loc){
                 set((state) => {
                     state.bookingLocationDetails = loc;
                 })
