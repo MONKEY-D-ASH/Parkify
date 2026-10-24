@@ -21,6 +21,7 @@ interface Coordinate {
 }
 
 interface User {
+    _id: string;
     address: string;
     email: string;
     isVerified: boolean;
@@ -29,6 +30,7 @@ interface User {
     username: string;
 }
 interface Car {
+    _id: string;
     carColor: string;
     carModel: string;
     carType: string;

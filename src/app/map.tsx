@@ -65,7 +65,7 @@ export default function Map({space}: any ) {
       center={position} 
       zoom={13} 
       scrollWheelZoom={false}
-      style={{height: "70vh", width:"100%", zIndex: 10}}
+      style={{height: "90vh", width:"100%", zIndex: 10}}
       >
 
       <TileLayer

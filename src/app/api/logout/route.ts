@@ -23,10 +23,21 @@ export async function GET(request: NextRequest){
         user.refreshToken = ""
         await user.save()
 
-        return NextResponse.json({
+        const response = NextResponse.json({
             message: "Logout Successful",
             success: true,
         }, {status: 200})
+
+        // we are removing the values of the refresh and the access token from the brwoser cookies storage during logout
+        response.cookies.set("accessToken", "", {
+            httpOnly: true,
+            path: "/"
+        })
+        response.cookies.set("refreshToken", "", {
+            httpOnly: true,
+            path: "/"
+        })
+        return response;
 
     } catch (error: any) {
         const status  = error instanceof ApiError? error.statusCode : 500

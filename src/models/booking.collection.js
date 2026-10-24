@@ -14,11 +14,11 @@ const bookingSchema = new mongoose.Schema({
         ref: "ParkingSpace"
     },
     startTime: {
-        type: Date,
+        type: String,
         required: true,
     },
     endTime: {
-        type: Date,
+        type: String,
         required: true,
     },
     totalPrice: {
