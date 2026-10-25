@@ -76,13 +76,13 @@ function BookSpace(){
                 }
                 const response = await axios.post("./api/booking", data)
                 console.log(response);
-                toast.success("user account created successfully")
+                toast.success("User Booking created successfully")
                 setIsLoading(false)  
                 setshowGetDirection(true)
                 
             } catch (error: any) {
                 if (error.response) {
-                    toast.error("There is an error while booking the parking space", error.response.data.status);
+                    toast.error("There is an error while booking the parking space", error.response.data.error);
                 } else{
                     toast.error("Booking Failed")
                 }
@@ -99,25 +99,26 @@ function BookSpace(){
     }
 
     return (
-    <div className="flex justify-center items-center flex-col h-1vh bg-gray-700">
-        <h1 className="text-white m-2 p-3 text-3xl ">{isLoading? "Processing" : "Book Space"}</h1>
-        <div className=" bg-black w-100 h-1vh p-5 mb-40 rounded-lg">
+    <div className="flex justify-center items-center flex-col min-h-lvh px-4 py-8 bg-[linear-gradient(135deg,#1E3A8A_0%,#0891B2_100%)]">
+        <h1 className="text-white m-2 p-3 text-3xl font-semibold tracking-tight drop-shadow-sm">{isLoading? "Processing" : "Book Parking"}</h1>
+        <div className="bg-white w-full max-w-md p-8 rounded-2xl border border-[#E2E8F0] shadow-[0_8px_24px_rgba(30,58,138,0.25)]">
 
             <FieldGroup>
             <Field>
-                <FieldLabel htmlFor="fieldgroup-name" className="text-white bg-green-600 border rounded-sm p-1">Destination: {bookingLocationDetails?.name}</FieldLabel>
-                <FieldLabel htmlFor="fieldgroup-Date&Time:arrival" className="text-white">Set you arrival Time</FieldLabel>
+                <FieldLabel htmlFor="fieldgroup-name" className="text-white font-semibold bg-[linear-gradient(135deg,#1E3A8A_0%,#0891B2_100%)] rounded-lg px-3 py-2.5 shadow-sm">Destination: {bookingLocationDetails?.name}</FieldLabel>
+
+                <FieldLabel htmlFor="fieldgroup-Date&Time:arrival" className="text-[#0F172A] font-medium mt-3">Set you arrival Time</FieldLabel>
                 <Input
-                className="text-white"
+                className="h-11 bg-white text-[#0F172A] placeholder:text-[#64748B] border-[#E2E8F0] focus-visible:border-[#0891B2] focus-visible:ring-[#0891B2]/30"
                 id="fieldgroup-Date&Time:arrival"
                 type="time"
                 placeholder="set arrival time"
                 value={bookingDetails.arrivalTime}
                 onChange={(e) => setbookingDetails({...bookingDetails, arrivalTime: e.target.value})}
                 />
-                <FieldLabel htmlFor="fieldgroup-Date&Time:departure" className="text-white">Set you Departure Time</FieldLabel>
+                <FieldLabel htmlFor="fieldgroup-Date&Time:departure" className="text-[#0F172A] font-medium mt-3">Set you Departure Time</FieldLabel>
                 <Input
-                className="text-white"
+                className="h-11 bg-white text-[#0F172A] placeholder:text-[#64748B] border-[#E2E8F0] focus-visible:border-[#0891B2] focus-visible:ring-[#0891B2]/30"
                 id="fieldgroup-Date&Time:departure"
                 type="time"
                 placeholder="set departure time"
@@ -125,29 +126,29 @@ function BookSpace(){
                 onChange={(e) => setbookingDetails({...bookingDetails, departureTime: e.target.value})}
                 />
 
-                <FieldLabel htmlFor="fieldgroup-vehicle details" className="text-white">Car Details:</FieldLabel>
-                <FieldLabel htmlFor="fieldgroup-vehicle details" className="text-white bg-blue-600 border rounded-sm p-1">License: {userCar?.license}</FieldLabel>
-                <FieldLabel htmlFor="fieldgroup-vehicle details" className="text-white bg-blue-600 border rounded-sm p-1">Type: {userCar?.carType}</FieldLabel>
-                <FieldLabel htmlFor="fieldgroup-vehicle details" className="text-white bg-blue-600 border rounded-sm p-1">Model: {userCar?.carModel}</FieldLabel>
-                <FieldLabel htmlFor="fieldgroup-vehicle details" className="text-white bg-blue-600 border rounded-sm p-1">Color: {userCar?.carColor}</FieldLabel>
+                <FieldLabel htmlFor="fieldgroup-vehicle details" className="text-[#1E3A8A] font-semibold mt-4 border-b border-[#E2E8F0] pb-1">Car Details:</FieldLabel>
+                <FieldLabel htmlFor="fieldgroup-vehicle details" className="text-[#0F172A] font-normal bg-[#EFF6FF] border border-[#DBEAFE] rounded-lg px-3 py-2">License: {userCar?.license}</FieldLabel>
+                <FieldLabel htmlFor="fieldgroup-vehicle details" className="text-[#0F172A] font-normal bg-[#EFF6FF] border border-[#DBEAFE] rounded-lg px-3 py-2">Type: {userCar?.carType}</FieldLabel>
+                <FieldLabel htmlFor="fieldgroup-vehicle details" className="text-[#0F172A] font-normal bg-[#EFF6FF] border border-[#DBEAFE] rounded-lg px-3 py-2">Model: {userCar?.carModel}</FieldLabel>
+                <FieldLabel htmlFor="fieldgroup-vehicle details" className="text-[#0F172A] font-normal bg-[#EFF6FF] border border-[#DBEAFE] rounded-lg px-3 py-2">Color: {userCar?.carColor}</FieldLabel>
 
-                <FieldLabel htmlFor="fieldgroup-contactInfo" className="text-white">User Details:</FieldLabel>
-                <FieldLabel htmlFor="fieldgroup-vehicle details" className="text-white bg-red-500 border rounded-sm p-1">Name: {user?.username}</FieldLabel>
-                <FieldLabel htmlFor="fieldgroup-vehicle details" className="text-white bg-red-500 border rounded-sm p-1">Phone: {user?.phoneNumber}</FieldLabel>
-                <FieldLabel htmlFor="fieldgroup-vehicle details" className="text-white bg-red-500 border rounded-sm p-1">Email: {user?.email}</FieldLabel>
+                <FieldLabel htmlFor="fieldgroup-contactInfo" className="text-[#1E3A8A] font-semibold mt-4 border-b border-[#E2E8F0] pb-1">User Details:</FieldLabel>
+                <FieldLabel htmlFor="fieldgroup-vehicle details" className="text-[#0F172A] font-normal bg-[#ECFEFF] border border-[#CFFAFE] rounded-lg px-3 py-2">Name: {user?.username}</FieldLabel>
+                <FieldLabel htmlFor="fieldgroup-vehicle details" className="text-[#0F172A] font-normal bg-[#ECFEFF] border border-[#CFFAFE] rounded-lg px-3 py-2">Phone: {user?.phoneNumber}</FieldLabel>
+                <FieldLabel htmlFor="fieldgroup-vehicle details" className="text-[#0F172A] font-normal bg-[#ECFEFF] border border-[#CFFAFE] rounded-lg px-3 py-2">Email: {user?.email}</FieldLabel>
 
                 <Button 
                 type="button" 
-                className="text-white bg-green-700 hover:bg-green-500"
+                className="w-full h-11 mt-4 bg-white text-[#1E3A8A] font-semibold border border-[#0891B2] hover:bg-[#ECFEFF] transition-colors"
                 onClick={setPrice}>
                 Calculate Price
                 </Button>
 
-                <FieldLabel htmlFor="fieldgroup-price" className="text-white">Total Amount: ${bookingDetails.totalPrice}</FieldLabel>
+                <FieldLabel htmlFor="fieldgroup-price" className="text-[#0F172A] text-lg font-semibold justify-center bg-[#F8FAFC] border border-[#E2E8F0] rounded-lg px-3 py-3">Total Amount: ${bookingDetails.totalPrice}</FieldLabel>
                 
                 <Button 
                 type="button" 
-                className="text-white bg-green-700 hover:bg-green-500"
+                className="w-full h-11 text-white font-semibold bg-[linear-gradient(135deg,#1E3A8A_0%,#0891B2_100%)] hover:bg-[linear-gradient(135deg,#1E40AF_0%,#06A3C7_100%)] hover:opacity-95 shadow-md transition-all"
                 onClick={bookParkingSpace}>
                 Book Parking Space
                 </Button>
@@ -156,14 +157,14 @@ function BookSpace(){
                     <div>
                         <Button 
                         type="button" 
-                        className="text-white bg-green-700 hover:bg-green-500"
+                        className="w-full h-11 text-white font-semibold bg-[#10B981] hover:bg-[#059669] shadow-md transition-colors"
                         onClick={getDirection}>
                         Get Direction
                         </Button>
                     </div>
                 )}    
 
-                <Link href={"/"}>Home</Link>
+                <Link href={"/"} className="text-center text-sm font-semibold text-[#0891B2] hover:text-[#1E3A8A] hover:underline transition-colors mt-2 underline"> Go to Home Page</Link>
 
 
             </Field>

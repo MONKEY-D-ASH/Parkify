@@ -12,12 +12,17 @@ import { useRouter } from 'next/navigation';
 // the loading = 'eager' is to load the image instantly at the time of page render
 const Map = dynamic(() => import("./map"), { ssr: false });
 
-export default function Home() {
-  const {setCurrentLocation, resetStore, setDisplayLocations} = useAuthStore()
+export default function HomePage() {
+  const setCurrentLocation = useAuthStore((state) => state.setCurrentLocation)
+  const resetStore = useAuthStore((state) => state.resetStore)
+  const setDisplayLocations = useAuthStore((state) => state.setDisplayLocations)
+  const user = useAuthStore((state) => state.user)
   const router = useRouter()
   const [showpanel, setShowpanel] = useState(false)
   const [searchtext, setSearchtext] = useState("")
   const [isLoading, setIsLoading] = useState(false)
+  const [showOptions, setShowOptions] = useState(true)
+
   const generateRandomNumber = () => {
     return Math.random() * (0.03-0.01) + 0.01
   }
@@ -29,13 +34,6 @@ export default function Home() {
     name: "your location"
     
   })
-  // const [locs, setLocs] = useState({
-  //   positon_1: [0,0],
-  //   positon_2: [0,0],
-  //   positon_3: [0,0],
-  //   positon_4: [0,0],
-  //   positon_5: [0,0],
-  // })
 
   const handleClick = () => {
     setShowpanel(!showpanel);
@@ -51,13 +49,12 @@ export default function Home() {
         toast.success("Logout success")
         router.push("/")
       }
+      setShowOptions(false)
     } catch (error: any) {
       console.log("There is an error in logout", error!.message);
       toast.error("Logout failed")
     }
   }
-
-  
 
   const handleSearch = async() => {
     // this will make an api call using the text that is provided inside the search box and that api will make a database call and search for the parking space near the entered location and will return the latitude and longitude of those locations which will be rendered on the map  
@@ -93,6 +90,14 @@ export default function Home() {
     }
   }
 
+  // this useEffect will fetch the details of the user from the zustand store and will display it on the popup profile section like user photo, name and email 
+  useEffect(() => {
+    if (user === null) {
+        setShowOptions(true)
+    }else {
+      setShowOptions(false)
+    }
+  })
 
   useEffect(() => {
     // on loading the main webpage , grab the users current location and then save it inside the local storage of the browser and on clicking the book option save the booking  location also in the local storage and during confirm booking take those two locations and redirect the user to the google maps website and hit direction
@@ -137,48 +142,45 @@ export default function Home() {
   }, []);
 
   return (
-  <div> 
+  <div className='min-h-screen bg-[#F8FAFC]'> 
     {showpanel && (
-      <div className='absolute top-14 left-3 w-70 h-70 rounded-lg bg-red-500 z-50'
+      <div className='absolute top-18 left-3 w-72 rounded-xl bg-white z-50 overflow-hidden border border-[#E2E8F0] shadow-[0_8px_24px_rgba(30,58,138,0.15)]'
       id='side-panel'
       >
-        <div id='profile-photo-container' className='flex justify-center items-center rounded-t-lg h-30 bg-gray-100 border-b border-gray-400'>
-          <div id='profile-picture' className='bg-white h-23 w-23 border rounded-full border-black'>
-            <Image
-            src="/images/list_icon_image.png" // the profile picture of the user will be displayed here 
-            loading='eager'
-            width={510}
-            height={510}
-            alt='list'
-            />
+        <div id='profile-photo-container' className='flex flex-col justify-center items-center gap-1 py-6 bg-[linear-gradient(135deg,#1E3A8A_0%,#0891B2_100%)] text-white'>
+          <div id='profile-picture' className='flex justify-center items-center bg-white h-20 w-20 rounded-full ring-4 ring-white/30 shadow-md mb-2'>
+            <h1 className='text-4xl font-semibold text-[#1E3A8A]'>{user? user.username.charAt(0).toUpperCase() : ""}</h1>
           </div>
+          <p className='text-base font-semibold'>{user? user.username : ""}</p>
+          <p className='text-sm text-white/80'>{user? user.email : ""}</p>
         </div>
 
-        <div className='flex justify-center items-center bg-gray-100 h-10 text-black border-b border-gray-400 hover:bg-gray-200'>
-          <Link href="./profile">Profile</Link>
+        <div className='flex justify-center items-center bg-white h-12 text-[#0F172A] text-sm font-medium border-b border-[#E2E8F0] transition-colors hover:bg-[#ECFEFF] hover:text-[#0891B2]'>
+          <Link href="./profile" className='flex w-full h-full items-center justify-center'>Profile</Link>
         </div>
 
-        <div className='flex justify-center items-center bg-gray-100 h-10 text-black border-b border-gray-400 hover:bg-gray-200'>
-          <Link href="./dashboard">Become provider/Dashboard</Link>
+        <div className='flex justify-center items-center bg-white h-12 text-[#0F172A] text-sm font-medium border-b border-[#E2E8F0] transition-colors hover:bg-[#ECFEFF] hover:text-[#0891B2]'>
+          <Link href="./dashboard" className='flex w-full h-full items-center justify-center'>Become provider/Dashboard</Link>
         </div>
 
-        <div className='flex justify-center items-center bg-gray-100 h-10 text-black border-b border-gray-400 hover:bg-gray-200'>
-          <Link href="./update_profile">Update Profile</Link>
+        <div className='flex justify-center items-center bg-white h-12 text-[#0F172A] text-sm font-medium border-b border-[#E2E8F0] transition-colors hover:bg-[#ECFEFF] hover:text-[#0891B2]'>
+          <Link href="./update_profile" className='flex w-full h-full items-center justify-center'>Update Profile</Link>
         </div>
 
-        <div className='flex justify-center items-center bg-gray-100 h-10 text-black hover:bg-gray-200 rounded-b-lg'> 
+        <div className='flex justify-center items-center bg-white h-12 text-[#EF4444] text-sm font-medium transition-colors hover:bg-red-50'> 
           <Link href="./logout"
           onClick={handleLogoutClick}
+          className='flex w-full h-full items-center justify-center'
           >Logout</Link>
         </div>
-        
+
       </div>
     )}
 
-    <div id='navbar-div' className='relative flex justify-center w-100% h-17 bg-gray-800 text-black '>
+    <div id='navbar-div' className='relative flex items-center justify-center h-16 px-3 bg-[linear-gradient(135deg,#1E3A8A_0%,#0891B2_100%)] text-[#0F172A] shadow-[0_4px_16px_rgba(30,58,138,0.25)]'>
 
-      <div id='outer-list-icon-div' className='absolute left-0 w-10 h-10 bg-white m-3 rounded-md'>
-          <div className='p-1'>
+      <div id='outer-list-icon-div' className='absolute left-3 flex items-center justify-center w-10 h-10 bg-white/95 rounded-lg shadow-sm cursor-pointer transition hover:bg-white hover:scale-105'>
+          <div className='p-2'>
             <Image
           src="/images/list_icon_image.png"
           loading='eager'
@@ -186,35 +188,41 @@ export default function Home() {
           height={500}
           alt='list'
           onClick={handleClick}
+          className='cursor-pointer'
            />
           </div>
       </div>
 
-      <div id='search-bar-div' className='flex bg-gray-800 w-100'> 
-        <input className='bg-white my-3 w-90 ml-1 pl-2 rounded-bl-md rounded-tl-md'
+      <div id='search-bar-div' className='flex w-full max-w-xl mx-14 shadow-md rounded-lg overflow-hidden'> 
+        <input className='flex-1 min-w-0 h-10 bg-white px-4 text-sm text-[#0F172A] placeholder:text-[#64748B] outline-none focus:ring-2 focus:ring-inset focus:ring-[#67E8F9]'
         type="text" 
-        placeholder='enter your text here' 
+        placeholder='enter your destination' 
         value= {searchtext}
         onChange={(e) => setSearchtext(e.target.value)}
         />
 
-        <input className='bg-green-500 hover:bg-green-600 my-3 mr-1 rounded-tr-md rounded-br-md px-2' 
+        <input className='h-10 px-5 bg-[#67E8F9] text-[#1E3A8A] text-sm font-semibold capitalize cursor-pointer transition-colors hover:bg-[#22D3EE]' 
           type="button" 
           value="search"
           onClick={handleSearch}
         />
       </div>
       
-      <div className='absolute right-20 top-5 bg-white px-2 py-1 mx-4 rounded-md hover:bg-gray-200'>
-        <Link href="./login">Login</Link>
-      </div>
+      {showOptions && (
+      <div className='absolute right-3 flex items-center gap-2'>
+        <div className='px-4 py-2 rounded-lg text-sm font-medium text-white border border-white/40 transition-colors hover:bg-white/15'>
+          <Link href="./login">Login</Link>
+        </div>
 
-      <div className='absolute right-5 top-5 bg-white px-2 py-1 rounded-md hover:bg-gray-200'>
-        <Link href="./registerUser">Register</Link>
+        <div className='px-4 py-2 rounded-lg text-sm font-semibold bg-white text-[#1E3A8A] shadow-sm transition-colors hover:bg-[#ECFEFF]'>
+          <Link href="./registerUser">Register</Link>
+        </div>
       </div>
+      )}
 
     </div>
     <Map space={space}/>   
   </div>
   );
+
 }

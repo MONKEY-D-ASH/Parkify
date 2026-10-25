@@ -12,6 +12,7 @@ import { Button } from "@/components/ui/button"
 import { useAuthStore } from "@/store/Auth";
 import axios from "axios";
 import toast from "react-hot-toast";
+import Link from "next/link";
 import { useRouter } from "next/navigation";
 
 function LoginUser(){
@@ -43,16 +44,17 @@ function LoginUser(){
             setIsLoading(false)
         }        
     }
+
     return (
-    <div className="flex justify-center items-center flex-col h-lvh bg-gray-700">
-        <h1 className="text-white m-2 p-3 text-3xl">{isLoading? "processing..." : "Login"}</h1>
-        <div className=" bg-black w-100 h-100 p-2 rounded-lg">
+    <div className="flex justify-center items-center flex-col min-h-lvh px-4 bg-[linear-gradient(135deg,#1E3A8A_0%,#0891B2_100%)]">
+        <h1 className="text-white m-2 p-3 text-3xl font-semibold tracking-tight drop-shadow-sm">{isLoading? "processing..." : "Login"}</h1>
+        <div className="bg-white w-full max-w-md p-8 rounded-2xl border border-[#E2E8F0] shadow-[0_8px_24px_rgba(30,58,138,0.25)]">
             <FieldGroup>
 
             <Field>
-                <FieldLabel htmlFor="fieldgroup-email" className="text-white">Email</FieldLabel>
+                <FieldLabel htmlFor="fieldgroup-email" className="text-[#0F172A] font-medium">Email</FieldLabel>
                 <Input
-                className="text-white"
+                className="h-11 bg-white text-[#0F172A] placeholder:text-[#64748B] border-[#E2E8F0] focus-visible:border-[#0891B2] focus-visible:ring-[#0891B2]/30"
                 id="fieldgroup-email"
                 type="email"
                 placeholder="Enter Email"
@@ -63,9 +65,9 @@ function LoginUser(){
             </Field>
 
             <Field>
-                <FieldLabel htmlFor="fieldgroup-password" className="text-white">Password</FieldLabel>
+                <FieldLabel htmlFor="fieldgroup-password" className="text-[#0F172A] font-medium">Password</FieldLabel>
                 <Input
-                className="text-white"
+                className="h-11 bg-white text-[#0F172A] placeholder:text-[#64748B] border-[#E2E8F0] focus-visible:border-[#0891B2] focus-visible:ring-[#0891B2]/30"
                 id="fieldgroup-password"
                 type="password"
                 placeholder="Enter Password"
@@ -76,24 +78,22 @@ function LoginUser(){
             </Field>
 
             <Field orientation="horizontal">
-                <Button 
-                type="reset" 
-                variant="outline" 
-                className="text-white"
-                onClick={() => setUser({email:"", password:""})}
-                >Reset fields
-                </Button>
-
-                <Button type="submit" className="text-white bg-green-600 hover:bg-green-500"
+                <Button type="submit" className="w-full h-11 text-white font-semibold bg-[linear-gradient(135deg,#1E3A8A_0%,#0891B2_100%)] hover:bg-[linear-gradient(135deg,#1E40AF_0%,#06A3C7_100%)] hover:opacity-95 shadow-md transition-all"
                 onClick={handleLoginClick}
                 >Login
                 </Button>
             </Field>
-            
+
+            <div className="flex justify-center items-center gap-2 text-sm">
+                <FieldLabel htmlFor="redirection-to-registerPage" className="text-[#64748B] font-normal w-auto">Don't have an Account?</FieldLabel>
+                <Link className="text-[#0891B2] font-semibold hover:text-[#1E3A8A] hover:underline transition-colors" href={"/registerUser"}>Sign Up</Link>
+            </div>
+
             </FieldGroup>
         </div> 
     </div>
     )
+
 }
 
 export default LoginUser
