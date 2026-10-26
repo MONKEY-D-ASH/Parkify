@@ -15,10 +15,7 @@ export async function POST(request: NextRequest){
         const reqBody = await request.json()        
         console.log(reqBody);
 
-        const {userId, carId, address, latitude, longitude, price_per_hour, arrivalTime, departureTime, totalPrice} = reqBody
-        const user = await User.findById(userId)
-        const userCar = await Car.findById(carId)
-
+        const {userId, address, latitude, longitude, price_per_hour, arrivalTime, departureTime, totalPrice} = reqBody
         
         const newSpace = new ParkingSpace({
             address: address,
@@ -30,8 +27,6 @@ export async function POST(request: NextRequest){
         const savedSpace = await newSpace.save()
 
         const newBooking = new Booking({
-            userId: user._id,
-            carId: userCar._id,
             spaceId: savedSpace._id,
             startTime: arrivalTime,
             endTime: departureTime,
@@ -40,13 +35,16 @@ export async function POST(request: NextRequest){
         })
         
         const savedBooking = await newBooking.save()
-        console.log("printing the saved booking");
-        console.log(savedBooking);
+
+        const user = await User.findByIdAndUpdate(userId, {
+            $addToSet: {bookingId: savedBooking._id}
+        })
+        await user.save()
 
         return NextResponse.json({
             message: "Booking created successfully",
             success: true,
-            savedBooking,
+            user,
         },{status: 200})
 
     } catch (error: any) {

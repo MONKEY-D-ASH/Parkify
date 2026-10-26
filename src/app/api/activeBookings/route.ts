@@ -1,4 +1,5 @@
 import  {connect}  from "@/models/dbConfig"
+import User from "@/models/user.collection"
 import ParkingSpace from "@/models/parking_space.collection"
 import Booking from "@/models/booking.collection"
 import { NextRequest, NextResponse } from "next/server"
@@ -9,32 +10,44 @@ connect()
 export async function POST(request: NextRequest){
     try {
         const reqBody = await request.json()        
-        const Id = reqBody.userId
-        
-        const userBooking = await Booking.findOne({userId: Id})
-        console.log("printing the booking of the user");
-        console.log(userBooking);
+        const userId = reqBody.userId
+        const user = await User.findById(userId)
 
-        const spaceId = userBooking.spaceId
-        const userSpace = await ParkingSpace.findById(spaceId)
-        console.log("printing the space the user has booked");
-        console.log(userSpace);
-
-        const responseData = {
-            address: userSpace.address,
-            price_per_hour: userSpace.pricePerHour,
-            status: userBooking.status,
-            startTime: userBooking.startTime,
-            endTime: userBooking.endTime,
-            totalPrice: userBooking.totalPrice
+        const responseData = await Booking.aggregate([
+        { $match: 
+            { 
+            _id: {
+                 $in: user.bookingId 
+                } 
+            } 
+        },
+        {
+            $lookup: {
+            from: "parkingspaces",
+            localField: "spaceId",
+            foreignField: "_id",
+            as: "space"
+            }
+        },
+        { $unwind: "$space" },
+        {
+            $project: {
+            address: "$space.address",
+            price_per_hour: "$space.pricePerHour",
+            latitude: "$space.latitude",
+            longitude: "$space.longitude",
+            status: 1,
+            startTime: 1,
+            endTime: 1,
+            totalPrice: 1
+            }
         }
-        console.log("printing the response data");
-        console.log(responseData);
+        ]);
         
         return NextResponse.json({
             message: "User Bookings fetched successfully",
             success: true,
-            data: responseData,
+            responseData,
         },{status: 200})
 
     } catch (error: any) {

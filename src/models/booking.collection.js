@@ -1,14 +1,6 @@
 import mongoose from "mongoose"
 
 const bookingSchema = new mongoose.Schema({
-    userId: {
-        type: mongoose.Schema.Types.ObjectId,
-        ref: "User"
-    },
-    carId: {
-        type: mongoose.Schema.Types.ObjectId,
-        ref: "Car"
-    },
     spaceId: {
         type: mongoose.Schema.Types.ObjectId,
         ref: "ParkingSpace"

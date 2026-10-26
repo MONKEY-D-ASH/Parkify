@@ -37,14 +37,16 @@ function BookSpace(){
             const totalHours = Math.floor(departureTime/100) - Math.floor(arrivalTime/100) - 1             
             const totalMinutes =  (60 - arrivalTime%100) + (departureTime%100)
             const totalHoursForPriceCalculation = totalHours + (totalMinutes/60)
-            totalPrice = totalHoursForPriceCalculation * bookingLocationDetails!.price_per_hour
+            const price = totalHoursForPriceCalculation * bookingLocationDetails!.price_per_hour
+            totalPrice = Number(price.toFixed(2))
             setbookingDetails({...bookingDetails, totalPrice: totalPrice})
             
         } else if (Math.floor(arrivalTime/100) > Math.floor(departureTime/100)) {
             const totalHours = 23 - Math.floor(arrivalTime/100) + Math.floor(departureTime/100)
             const totalMinutes = (departureTime%100) + (60 - arrivalTime%100)
             const totalHoursForPriceCalculation = totalHours + (totalMinutes/60)
-            totalPrice = totalHoursForPriceCalculation * bookingLocationDetails!.price_per_hour
+            const price = totalHoursForPriceCalculation * bookingLocationDetails!.price_per_hour
+            totalPrice = Number(price.toFixed(2))
             setbookingDetails({...bookingDetails, totalPrice: totalPrice})
         }
     }   
@@ -65,7 +67,6 @@ function BookSpace(){
             try {
                 const data = {
                     userId: user?._id,
-                    carId: userCar?._id,
                     address: bookingLocationDetails?.name,
                     latitude: bookingLocationDetails?.latitude,
                     longitude: bookingLocationDetails?.longitude,
@@ -164,7 +165,7 @@ function BookSpace(){
                     </div>
                 )}    
 
-                <Link href={"/"} className="text-center text-sm font-semibold text-[#0891B2] hover:text-[#1E3A8A] hover:underline transition-colors mt-2 underline"> Go to Home Page</Link>
+                <Link href={"/profile"} className="text-center text-sm font-semibold text-[#0891B2] hover:text-[#1E3A8A] hover:underline transition-colors mt-2 underline"> Go to Your Bookings</Link>
 
 
             </Field>

@@ -38,6 +38,10 @@ const userSchema = new mongoose.Schema({
         type: mongoose.Schema.Types.ObjectId,
         ref: "ParkingSpace"
     },
+    bookingId: [{
+        type: mongoose.Schema.Types.ObjectId,
+        ref: "ParkingSpace"
+    }],
     address: {
         type: String,
         required: true,
