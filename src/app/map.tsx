@@ -36,7 +36,13 @@ export default function Map({space}: any ) {
   const setBookingLocationDetails = useAuthStore((state) => state.setBookingLocationDetails)
   const locations = useAuthStore((state) => state.displayLocations)
   const [marker, setMarker] = useState()
-  
+  const generateRandomNumber = () => {
+    return Math.random() * (0.07-0.01) + 0.01
+  }
+
+  const generateRandomArea = () => {
+    return Math.floor(Math.random() * (400 - 150 + 1)) + 150
+  }
 
   const handleaBookingClick = (e: React.MouseEvent<HTMLButtonElement>) => {
     // save the value of the set location inside the zustand authStore and then redirect the user to the booking page and then extract those latitude and longitude from the zustand store and after the booking and the payment redirect the user to the google maps api 
@@ -75,15 +81,21 @@ export default function Map({space}: any ) {
 
       <Marker position={position_1} >
       <Popup> 
-        <div className='bg-blue-700 p-2 text-white rounded-md m-1'>
-          price: ${space.price_per_hour}.
+        <div className='flex w-44 items-center justify-between rounded-lg bg-[linear-gradient(135deg,#1E3A8A_0%,#0891B2_100%)] px-3 py-2 text-white shadow-sm m-1'>
+          <span className='text-xs uppercase tracking-wide text-white/80'>Price</span>
+          <span className='text-sm font-semibold'>${(generateRandomNumber()*1000).toFixed(2)}</span>
         </div> 
-        <div className='bg-blue-700 p-2 text-white rounded-md m-1'>
-         available: {space.availability_status ? `Yes` : `No`}.
+        <div className='flex w-44 items-center justify-between rounded-lg border border-[#DBEAFE] bg-[#EFF6FF] px-3 py-2 text-[#0F172A] m-1'>
+          <span className='text-xs uppercase tracking-wide text-[#64748B]'>Size</span>
+          <span className='text-sm font-semibold'>{generateRandomArea()} sq ft</span>
         </div>
-        <div>
+        <div className={`flex w-44 items-center justify-between rounded-lg border px-3 py-2 m-1 ${space.availability_status ? 'border-[#A7F3D0] bg-[#ECFDF5] text-[#047857]' : 'border-[#FECACA] bg-[#FEF2F2] text-[#B91C1C]'}`}>
+          <span className='text-xs uppercase tracking-wide opacity-80'>Available</span>
+          <span className='text-sm font-semibold'>{space.availability_status ? `Yes` : `No`}</span>
+        </div>
+        <div className='w-44 m-1'>
           <button 
-          className='bg-green-500 hover:bg-green-600 p-2 text-white rounded-md m-1'
+          className='w-full cursor-pointer rounded-lg bg-[linear-gradient(135deg,#1E3A8A_0%,#0891B2_100%)] px-3 py-2 text-sm font-semibold text-white shadow-md transition-all hover:bg-[linear-gradient(135deg,#1E40AF_0%,#06A3C7_100%)] hover:opacity-95'
           onClick={handleaBookingClick}
           >book</button>
         </div>
@@ -92,15 +104,21 @@ export default function Map({space}: any ) {
 
       <Marker position={position_2} >
       <Popup> 
-        <div className='bg-blue-700 p-2 text-white rounded-md m-1'>
-          price: ${space.price_per_hour}.
+        <div className='flex w-44 items-center justify-between rounded-lg bg-[linear-gradient(135deg,#1E3A8A_0%,#0891B2_100%)] px-3 py-2 text-white shadow-sm m-1'>
+          <span className='text-xs uppercase tracking-wide text-white/80'>Price</span>
+          <span className='text-sm font-semibold'>${(generateRandomNumber()*1000).toFixed(2)}</span>
         </div> 
-        <div className='bg-blue-700 p-2 text-white rounded-md m-1'>
-         available: {space.availability_status ? `Yes` : `No`}.
+        <div className='flex w-44 items-center justify-between rounded-lg border border-[#DBEAFE] bg-[#EFF6FF] px-3 py-2 text-[#0F172A] m-1'>
+          <span className='text-xs uppercase tracking-wide text-[#64748B]'>Size</span>
+          <span className='text-sm font-semibold'>{generateRandomArea()} sq ft</span>
         </div>
-        <div>
+        <div className={`flex w-44 items-center justify-between rounded-lg border px-3 py-2 m-1 ${space.availability_status ? 'border-[#A7F3D0] bg-[#ECFDF5] text-[#047857]' : 'border-[#FECACA] bg-[#FEF2F2] text-[#B91C1C]'}`}>
+          <span className='text-xs uppercase tracking-wide opacity-80'>Available</span>
+          <span className='text-sm font-semibold'>{space.availability_status ? `Yes` : `No`}</span>
+        </div>
+        <div className='w-44 m-1'>
           <button 
-          className='bg-green-500 hover:bg-green-600 p-2 text-white rounded-md m-1'
+          className='w-full cursor-pointer rounded-lg bg-[linear-gradient(135deg,#1E3A8A_0%,#0891B2_100%)] px-3 py-2 text-sm font-semibold text-white shadow-md transition-all hover:bg-[linear-gradient(135deg,#1E40AF_0%,#06A3C7_100%)] hover:opacity-95'
           onClick={handleaBookingClick}
           >book</button>
         </div>
@@ -109,15 +127,21 @@ export default function Map({space}: any ) {
 
       <Marker position={position_3} >
       <Popup> 
-        <div className='bg-blue-700 p-2 text-white rounded-md m-1'>
-          price: ${space.price_per_hour}.
+        <div className='flex w-44 items-center justify-between rounded-lg bg-[linear-gradient(135deg,#1E3A8A_0%,#0891B2_100%)] px-3 py-2 text-white shadow-sm m-1'>
+          <span className='text-xs uppercase tracking-wide text-white/80'>Price</span>
+          <span className='text-sm font-semibold'>${(generateRandomNumber()*1000).toFixed(2)}</span>
         </div> 
-        <div className='bg-blue-700 p-2 text-white rounded-md m-1'>
-         available: {space.availability_status ? `Yes` : `No`}.
+        <div className='flex w-44 items-center justify-between rounded-lg border border-[#DBEAFE] bg-[#EFF6FF] px-3 py-2 text-[#0F172A] m-1'>
+          <span className='text-xs uppercase tracking-wide text-[#64748B]'>Size</span>
+          <span className='text-sm font-semibold'>{generateRandomArea()} sq ft</span>
         </div>
-        <div>
+        <div className={`flex w-44 items-center justify-between rounded-lg border px-3 py-2 m-1 ${space.availability_status ? 'border-[#A7F3D0] bg-[#ECFDF5] text-[#047857]' : 'border-[#FECACA] bg-[#FEF2F2] text-[#B91C1C]'}`}>
+          <span className='text-xs uppercase tracking-wide opacity-80'>Available</span>
+          <span className='text-sm font-semibold'>{space.availability_status ? `Yes` : `No`}</span>
+        </div>
+        <div className='w-44 m-1'>
           <button 
-          className='bg-green-500 hover:bg-green-600 p-2 text-white rounded-md m-1'
+          className='w-full cursor-pointer rounded-lg bg-[linear-gradient(135deg,#1E3A8A_0%,#0891B2_100%)] px-3 py-2 text-sm font-semibold text-white shadow-md transition-all hover:bg-[linear-gradient(135deg,#1E40AF_0%,#06A3C7_100%)] hover:opacity-95'
           onClick={handleaBookingClick}
           >book</button>
         </div>
@@ -126,15 +150,21 @@ export default function Map({space}: any ) {
 
       <Marker position={position_4} >
       <Popup> 
-        <div className='bg-blue-700 p-2 text-white rounded-md m-1'>
-          price: ${space.price_per_hour}.
+        <div className='flex w-44 items-center justify-between rounded-lg bg-[linear-gradient(135deg,#1E3A8A_0%,#0891B2_100%)] px-3 py-2 text-white shadow-sm m-1'>
+          <span className='text-xs uppercase tracking-wide text-white/80'>Price</span>
+          <span className='text-sm font-semibold'>${(generateRandomNumber()*1000).toFixed(2)}</span>
         </div> 
-        <div className='bg-blue-700 p-2 text-white rounded-md m-1'>
-         available: {space.availability_status ? `Yes` : `No`}.
+        <div className='flex w-44 items-center justify-between rounded-lg border border-[#DBEAFE] bg-[#EFF6FF] px-3 py-2 text-[#0F172A] m-1'>
+          <span className='text-xs uppercase tracking-wide text-[#64748B]'>Size</span>
+          <span className='text-sm font-semibold'>{generateRandomArea()} sq ft</span>
         </div>
-        <div>
+        <div className={`flex w-44 items-center justify-between rounded-lg border px-3 py-2 m-1 ${space.availability_status ? 'border-[#A7F3D0] bg-[#ECFDF5] text-[#047857]' : 'border-[#FECACA] bg-[#FEF2F2] text-[#B91C1C]'}`}>
+          <span className='text-xs uppercase tracking-wide opacity-80'>Available</span>
+          <span className='text-sm font-semibold'>{space.availability_status ? `Yes` : `No`}</span>
+        </div>
+        <div className='w-44 m-1'>
           <button 
-          className='bg-green-500 hover:bg-green-600 p-2 text-white rounded-md m-1'
+          className='w-full cursor-pointer rounded-lg bg-[linear-gradient(135deg,#1E3A8A_0%,#0891B2_100%)] px-3 py-2 text-sm font-semibold text-white shadow-md transition-all hover:bg-[linear-gradient(135deg,#1E40AF_0%,#06A3C7_100%)] hover:opacity-95'
           onClick={handleaBookingClick}
           >book</button>
         </div>
@@ -143,15 +173,21 @@ export default function Map({space}: any ) {
 
       <Marker position={position_5} >
       <Popup> 
-        <div className='bg-blue-700 p-2 text-white rounded-md m-1'>
-          price: ${space.price_per_hour}.
+        <div className='flex w-44 items-center justify-between rounded-lg bg-[linear-gradient(135deg,#1E3A8A_0%,#0891B2_100%)] px-3 py-2 text-white shadow-sm m-1'>
+          <span className='text-xs uppercase tracking-wide text-white/80'>Price</span>
+          <span className='text-sm font-semibold'>${(generateRandomNumber()*1000).toFixed(2)}</span>
         </div> 
-        <div className='bg-blue-700 p-2 text-white rounded-md m-1'>
-         available: {space.availability_status ? `Yes` : `No`}.
+        <div className='flex w-44 items-center justify-between rounded-lg border border-[#DBEAFE] bg-[#EFF6FF] px-3 py-2 text-[#0F172A] m-1'>
+          <span className='text-xs uppercase tracking-wide text-[#64748B]'>Size</span>
+          <span className='text-sm font-semibold'>{generateRandomArea()} sq ft</span>
         </div>
-        <div>
+        <div className={`flex w-44 items-center justify-between rounded-lg border px-3 py-2 m-1 ${space.availability_status ? 'border-[#A7F3D0] bg-[#ECFDF5] text-[#047857]' : 'border-[#FECACA] bg-[#FEF2F2] text-[#B91C1C]'}`}>
+          <span className='text-xs uppercase tracking-wide opacity-80'>Available</span>
+          <span className='text-sm font-semibold'>{space.availability_status ? `Yes` : `No`}</span>
+        </div>
+        <div className='w-44 m-1'>
           <button 
-          className='bg-green-500 hover:bg-green-600 p-2 text-white rounded-md m-1'
+          className='w-full cursor-pointer rounded-lg bg-[linear-gradient(135deg,#1E3A8A_0%,#0891B2_100%)] px-3 py-2 text-sm font-semibold text-white shadow-md transition-all hover:bg-[linear-gradient(135deg,#1E40AF_0%,#06A3C7_100%)] hover:opacity-95'
           onClick={handleaBookingClick}
           >book</button>
         </div>
@@ -162,4 +198,5 @@ export default function Map({space}: any ) {
       
     </MapContainer>
   );
+
 }

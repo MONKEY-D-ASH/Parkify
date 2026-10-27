@@ -5,6 +5,7 @@ import bcrypt from "bcryptjs"
 import jwt from "jsonwebtoken"
 import { ApiError } from "next/dist/server/api-utils";
 import Car from "@/models/car.collection";
+import ParkingSpace from "@/models/parking_space.collection";
 
 connect()
 
@@ -31,15 +32,14 @@ export async function POST(request: NextRequest){
         // check if user exists or not 
         const user = await User.findOne({email})
         if(!user){
-            throw new ApiError(400, "User does not exist")
+            throw new ApiError(417, "User does not exist")
         }
 
-        // check if the user car exists or not 
-        const userCar = await Car.findById(user.carId)
-        if(!userCar){
-            throw new ApiError(400, "User car does not exist")
-        }
+        const userCar = await Car.findById(user.carId)        
+        const userParkingSpace = await ParkingSpace.findById(user.spaceId)
+        console.log(userParkingSpace);
         
+
         // check if the password is correct or not 
         const isPasswordCorrect = await bcrypt.compare(password, user.password)
 
@@ -61,7 +61,8 @@ export async function POST(request: NextRequest){
             message: "Login successful",
             success: true,
             user: loggedInUser,
-            userCar: userCar
+            userCar: userCar,
+            userParkingSpace: userParkingSpace
         }) 
         // we are setting the cookies on the browser and this method takes three paramters: name, value and options   
         response.cookies.set("accessToken", accessToken, {
@@ -75,6 +76,7 @@ export async function POST(request: NextRequest){
         return response;
 
     } catch (error : any) {
+        console.log(error);
         const status  = error instanceof ApiError? error.statusCode : 500
         const message = error instanceof ApiError? error.message : "Internal Server Error"
         return NextResponse.json({error: message}, {status: status})

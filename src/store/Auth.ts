@@ -36,6 +36,15 @@ interface Car {
     carType: string;
     license: string;
 }
+
+interface Space {
+    _id: string;
+    address: string;
+    latitude: number;
+    longitude: number;
+    pricePerHour: number;
+    availabilityStatus: boolean
+}
 interface DisplayLocations {
     position_1:Coordinate;
     position_2:Coordinate;
@@ -54,6 +63,7 @@ interface BookingLocationDetails {
 interface IAuthStore { 
     user: User | null
     userCar: Car | null
+    userParkingSpace: Space | null
     hydrated: boolean
     currentLocation: {
         latitude: number,
@@ -64,6 +74,7 @@ interface IAuthStore {
 
     setUserDetails(user: User): void;
     setUserCarDetails(car: Car): void;
+    setUserParkingSpace(space: Space): void;
     setHydrated(): void;
     setCurrentLocation(loc: {latitude: number , longitude: number}): void;
     setBookingLocationDetails(loc: BookingLocationDetails): void;
@@ -85,6 +96,7 @@ export const useAuthStore = create<IAuthStore>()(
         immer((set) => ({
             user: null,
             userCar: null,
+            userParkingSpace: null,
             hydrated: false,
             currentLocation: null,
             bookingLocationDetails: null,
@@ -99,6 +111,12 @@ export const useAuthStore = create<IAuthStore>()(
             setUserCarDetails(car){
                 set((state) => {
                     state.userCar = car
+                })
+            },
+
+            setUserParkingSpace(space){
+                set((state) => {
+                    state.userParkingSpace = space
                 })
             },
 

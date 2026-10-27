@@ -28,6 +28,7 @@ function UserProfile(){
     const currentLocation = useAuthStore((state) => state.currentLocation)
     const userCar = useAuthStore((state) => state.userCar)
     const user = useAuthStore((state) => state.user)    
+    const userParkingSpace = useAuthStore((state) => state.userParkingSpace)    
     const [showBookingDetails, setShowBookingDetails ] = useState(false)
     const [activeBookingDetails, setActiveBookingDetails] = useState<BookingData[]>([])
 
@@ -71,8 +72,6 @@ function UserProfile(){
     <div className="flex justify-center items-center flex-col min-h-lvh px-4 py-8 bg-[linear-gradient(135deg,#1E3A8A_0%,#0891B2_100%)]">
         <h1 className="text-white m-2 p-3 text-3xl font-semibold tracking-tight drop-shadow-sm">User Profile</h1>
         <div className="bg-white w-full max-w-3xl p-8 rounded-2xl border border-[#E2E8F0] shadow-[0_8px_24px_rgba(30,58,138,0.25)]">
-                <p className="text-[#64748B] text-sm mb-6 pb-4 border-b border-[#E2E8F0]"> here display the details of the user by calling a profile route and then extracting all the necessary data of the user
-                </p>
                 <FieldGroup>
                     <Field className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                         <FieldLabel className="text-[#0F172A] font-normal bg-[#ECFEFF] border border-[#CFFAFE] rounded-lg px-3 py-2.5"> Name: {user?.username}</FieldLabel>
@@ -86,6 +85,11 @@ function UserProfile(){
                         <FieldLabel className="text-[#0F172A] font-normal bg-[#EFF6FF] border border-[#DBEAFE] rounded-lg px-3 py-2.5 capitalize"> Car Type: {userCar?.carType}</FieldLabel>
                         <FieldLabel className="text-[#0F172A] font-normal bg-[#EFF6FF] border border-[#DBEAFE] rounded-lg px-3 py-2.5"> Car License: {userCar?.license}</FieldLabel>
                         <FieldLabel className="text-[#0F172A] font-normal bg-[#EFF6FF] border border-[#DBEAFE] rounded-lg px-3 py-2.5"> Car Color: {userCar?.carColor}</FieldLabel>
+                    </Field>
+                    <Field className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                        <FieldLabel className="text-[#0F172A] font-normal bg-[#ECFEFF] border border-[#CFFAFE] rounded-lg px-3 py-2.5"> Address: {userParkingSpace?.address}</FieldLabel>
+                        <FieldLabel className="text-[#0F172A] font-normal bg-[#ECFEFF] border border-[#CFFAFE] rounded-lg px-3 py-2.5"> Rate: ${userParkingSpace?.pricePerHour}</FieldLabel>
+                        <FieldLabel className="text-[#0F172A] font-normal bg-[#ECFEFF] border border-[#CFFAFE] rounded-lg px-3 py-2.5"> Availability Status: {userParkingSpace?.availabilityStatus === true ? "Available" : "Not Available"}</FieldLabel>
                     </Field>
                     <Button 
                     type="button"

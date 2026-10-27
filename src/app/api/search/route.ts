@@ -8,6 +8,7 @@ export async function POST(request: NextRequest){
     try {        
         const reqBody = await request.json()    
         const {data} = reqBody // this is the text that is entered in the search field 
+        
         const params = new URLSearchParams({
             addressdetails: "1",
             q: data,

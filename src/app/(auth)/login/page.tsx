@@ -16,7 +16,7 @@ import Link from "next/link";
 import { useRouter } from "next/navigation";
 
 function LoginUser(){
-    const {setUserDetails, setUserCarDetails} = useAuthStore()
+    const {setUserDetails, setUserCarDetails, setUserParkingSpace} = useAuthStore()
     const [user, setUser] = React.useState({
         email: "",
         password: ""
@@ -33,6 +33,9 @@ function LoginUser(){
                 const response = await axios.post("./api/login", user)
                 setUserDetails(response.data.user)
                 setUserCarDetails(response.data.userCar)
+                if (response?.data?.userParkingSpace.length !== 0) {
+                    setUserParkingSpace(response.data.userParkingSpace)
+                }
                 toast.success("login success") 
                 router.push("/")
         }

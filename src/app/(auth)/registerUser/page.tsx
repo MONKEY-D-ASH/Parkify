@@ -26,7 +26,6 @@ function RegistrationPage(){
         email: "",
         password: "",
         phoneNumber: "",
-        role: "",
         address: "",
         license: "",
         carModel: "",
@@ -51,7 +50,6 @@ function RegistrationPage(){
                 email: formData.email,
                 password: formData.password,
                 phoneNumber: formData.phoneNumber,
-                role: formData.role,
                 address: formData.address,
                 license: formData.license,
                 carModel: formData.carModel,
@@ -148,26 +146,6 @@ function RegistrationPage(){
                         onChange={(e) => setFormData({...formData, phoneNumber:e.target.value })}
                         />
                         <FieldDescription className="text-[#64748B] text-xs">Phone Number must be valid and of 10 digits</FieldDescription>
-                    </Field>
-
-                    <Field>
-                        <FieldLabel htmlFor="fieldgroup-role" className="text-[#0F172A] font-medium">Role: <span className="text-[#0891B2] font-semibold capitalize">{formData.role}</span></FieldLabel>
-                        <div className="flex flex-wrap gap-2">
-                            <Button
-                            id="fieldgroup-role"
-                            variant="outline"
-                            className={`flex-1 h-10 font-medium transition-all ${formData.role === "customer" ? "text-white border-transparent bg-[linear-gradient(135deg,#1E3A8A_0%,#0891B2_100%)] hover:text-white shadow-sm" : "text-[#1E3A8A] bg-white border-[#E2E8F0] hover:bg-[#ECFEFF] hover:border-[#0891B2]"}`}
-                            onClick={() => setFormData({...formData, role:"customer"})}
-                            >Customer</Button>
-
-                            <Button
-                            variant="outline"
-                            id="fieldgroup-role"
-                            className={`flex-1 h-10 font-medium transition-all ${formData.role === "provider" ? "text-white border-transparent bg-[linear-gradient(135deg,#1E3A8A_0%,#0891B2_100%)] hover:text-white shadow-sm" : "text-[#1E3A8A] bg-white border-[#E2E8F0] hover:bg-[#ECFEFF] hover:border-[#0891B2]"}`}
-                            onClick={() => setFormData({...formData, role:"provider"})}
-                            >Provider</Button>
-                        </div>
-                        <FieldDescription className="text-[#64748B] text-xs">Select your role on this platform</FieldDescription>
                     </Field>
 
                     <Field>

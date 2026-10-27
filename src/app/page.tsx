@@ -12,6 +12,14 @@ import { useRouter } from 'next/navigation';
 // the loading = 'eager' is to load the image instantly at the time of page render
 const Map = dynamic(() => import("./map"), { ssr: false });
 
+interface LocationDetails {
+  price_per_hour : number;
+  availability_status: boolean;
+  latitude: number;
+  longitude: number;
+  name: string
+}
+
 export default function HomePage() {
   const setCurrentLocation = useAuthStore((state) => state.setCurrentLocation)
   const resetStore = useAuthStore((state) => state.resetStore)
@@ -26,8 +34,8 @@ export default function HomePage() {
   const generateRandomNumber = () => {
     return Math.random() * (0.03-0.01) + 0.01
   }
-  const [space, setSpace] = useState({
-    price_per_hour: 0,
+  const [space, setSpace] = useState<LocationDetails>({
+    price_per_hour: Number((generateRandomNumber()*1000).toFixed(2)),
     availability_status: false,
     latitude: 48.8566,
     longitude: 2.3522,
@@ -108,7 +116,7 @@ export default function HomePage() {
             position_4: {latitude: space.latitude + generateRandomNumber(), longitude: space.longitude + generateRandomNumber()},
             position_5: {latitude: space.latitude + generateRandomNumber(), longitude: space.longitude + generateRandomNumber()},
           }
-            setDisplayLocations(displayLocations)
+          setDisplayLocations(displayLocations)
      if (!navigator.geolocation) {
             console.log("Geolocation is not supported by your browser");
             return;
@@ -122,7 +130,6 @@ export default function HomePage() {
         navigator.geolocation.getCurrentPosition((position) => {
             const latitude = position.coords.latitude;
             const longitude = position.coords.longitude;
-    
             const data = {latitude, longitude}
             setCurrentLocation(data)
         }),
@@ -159,13 +166,9 @@ export default function HomePage() {
           <Link href="./profile" className='flex w-full h-full items-center justify-center'>Profile</Link>
         </div>
 
-        <div className='flex justify-center items-center bg-white h-12 text-[#0F172A] text-sm font-medium border-b border-[#E2E8F0] transition-colors hover:bg-[#ECFEFF] hover:text-[#0891B2]'>
-          <Link href="./dashboard" className='flex w-full h-full items-center justify-center'>Become provider/Dashboard</Link>
-        </div>
-
-        <div className='flex justify-center items-center bg-white h-12 text-[#0F172A] text-sm font-medium border-b border-[#E2E8F0] transition-colors hover:bg-[#ECFEFF] hover:text-[#0891B2]'>
+        {/* <div className='flex justify-center items-center bg-white h-12 text-[#0F172A] text-sm font-medium border-b border-[#E2E8F0] transition-colors hover:bg-[#ECFEFF] hover:text-[#0891B2]'>
           <Link href="./update_profile" className='flex w-full h-full items-center justify-center'>Update Profile</Link>
-        </div>
+        </div> */}
 
         <div className='flex justify-center items-center bg-white h-12 text-[#EF4444] text-sm font-medium transition-colors hover:bg-red-50'> 
           <Link href="./logout"
@@ -221,8 +224,54 @@ export default function HomePage() {
       )}
 
     </div>
-    <Map space={space}/>   
+    <Map space={space}/>
+
+    {/* How it works */}
+    <section className='max-w-5xl mx-auto px-4 py-12'>
+      <h2 className='text-2xl font-semibold text-center text-[#1E3A8A] mb-8'>How it works</h2>
+      <div className='grid grid-cols-1 sm:grid-cols-3 gap-5'>
+
+        <div className='bg-white rounded-xl border border-[#E2E8F0] p-6 text-center shadow-sm transition hover:shadow-[0_8px_24px_rgba(30,58,138,0.15)]'>
+          <div className='mx-auto mb-4 flex h-12 w-12 items-center justify-center rounded-full bg-[linear-gradient(135deg,#1E3A8A_0%,#0891B2_100%)] text-lg font-semibold text-white'>1</div>
+          <h3 className='text-lg font-semibold text-[#0F172A] mb-1'>Search</h3>
+          <p className='text-sm text-[#64748B]'>Enter your destination and see nearby parking spaces on the map.</p>
+        </div>
+
+        <div className='bg-white rounded-xl border border-[#E2E8F0] p-6 text-center shadow-sm transition hover:shadow-[0_8px_24px_rgba(30,58,138,0.15)]'>
+          <div className='mx-auto mb-4 flex h-12 w-12 items-center justify-center rounded-full bg-[linear-gradient(135deg,#1E3A8A_0%,#0891B2_100%)] text-lg font-semibold text-white'>2</div>
+          <h3 className='text-lg font-semibold text-[#0F172A] mb-1'>Book</h3>
+          <p className='text-sm text-[#64748B]'>Choose a space, set your arrival and departure time, and confirm.</p>
+        </div>
+
+        <div className='bg-white rounded-xl border border-[#E2E8F0] p-6 text-center shadow-sm transition hover:shadow-[0_8px_24px_rgba(30,58,138,0.15)]'>
+          <div className='mx-auto mb-4 flex h-12 w-12 items-center justify-center rounded-full bg-[linear-gradient(135deg,#1E3A8A_0%,#0891B2_100%)] text-lg font-semibold text-white'>3</div>
+          <h3 className='text-lg font-semibold text-[#0F172A] mb-1'>Park</h3>
+          <p className='text-sm text-[#64748B]'>Get directions to your booked space and park without the hassle.</p>
+        </div>
+
+      </div>
+    </section>
+
+    {/* Become a provider banner */}
+    <section className='max-w-5xl mx-auto px-4 pb-12'>
+      <div className='flex flex-col items-center gap-4 rounded-2xl bg-[linear-gradient(135deg,#1E3A8A_0%,#0891B2_100%)] px-6 py-10 text-center shadow-[0_8px_24px_rgba(30,58,138,0.25)]'>
+        <h2 className='text-2xl font-semibold text-white'>Have a spare parking space?</h2>
+        <p className='max-w-md text-sm text-white/80'>List it on our platform and earn money whenever someone books it.</p>
+        <Link href="./becomeProvider" className='rounded-lg bg-white px-5 py-2.5 text-sm font-semibold text-[#1E3A8A] shadow-sm transition-colors hover:bg-[#ECFEFF]'>
+          Become a provider
+        </Link>
+      </div>
+    </section>
+
+    {/* Footer */}
+    <footer className='bg-[#0F172A] px-4 py-6 text-center text-sm text-[#94A3B8]'>
+      <div className='mb-2 flex justify-center gap-5'>
+        <Link href="/" className='transition-colors hover:text-[#67E8F9]'>Home</Link>
+        <Link href="./login" className='transition-colors hover:text-[#67E8F9]'>Login</Link>
+        <Link href="./registerUser" className='transition-colors hover:text-[#67E8F9]'>Register</Link>
+      </div>
+      <p>© 2026 Parkify. College project.</p>
+    </footer>
   </div>
   );
-
-}
+}   

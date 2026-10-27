@@ -9,7 +9,7 @@ connect()
 export async function POST(request: NextRequest){
     try {        
         const reqBody = await request.json()
-        const {username, email, password, phoneNumber, role, address, license, carModel, carColor, carType} = reqBody
+        const {username, email, password, phoneNumber, address, license, carModel, carColor, carType} = reqBody
         console.log(reqBody);
 
         const user = await User.findOne({email})
@@ -31,7 +31,6 @@ export async function POST(request: NextRequest){
             // this password will be hashed during the save prehook we defined in the userSchema in the user.collection.js 
             password: password,
             phoneNumber: phoneNumber,
-            role: role,
             address: address,
             carId: savedCar._id,
         })
