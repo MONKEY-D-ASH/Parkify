@@ -95,7 +95,7 @@ function UserProfile(){
                     type="button"
                     className="w-full h-11 text-white font-semibold bg-[linear-gradient(135deg,#1E3A8A_0%,#0891B2_100%)] hover:bg-[linear-gradient(135deg,#1E40AF_0%,#06A3C7_100%)] hover:opacity-95 shadow-md transition-all"
                     onClick={getActiveBookings}>
-                    Get active Bookings
+                    Get Bookings
                     </Button>
 
                     {showBookingDetails && (

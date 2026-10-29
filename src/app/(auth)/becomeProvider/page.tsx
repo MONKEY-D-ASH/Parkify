@@ -50,7 +50,7 @@ function RegistrationPage(){
                 const response = await axios.post("./api/becomeProvider", data)
                 console.log(response.data.userSpace);
                 setUserParkingSpace(response.data.userSpace)
-                toast.success("You have Become a Provider")
+                toast.success(response.data.message)
                 setIsLoading(false) // to show the user that the account has been created successfully 
                 router.push("/") // this will push the user to the home page
             } 

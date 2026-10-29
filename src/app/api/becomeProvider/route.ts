@@ -15,7 +15,8 @@ export async function POST(request: NextRequest){
             const userSpace = await ParkingSpace.findById(user.spaceId)
             console.log(userSpace);
             return NextResponse.json({
-            userSpace: userSpace
+            userSpace: userSpace,
+            message: "you are already a provider"
             },
             {
             status: 200
@@ -61,7 +62,8 @@ export async function POST(request: NextRequest){
         
     
         return NextResponse.json({
-            userSpace: {userSpace}
+            userSpace: userSpace,
+            message: "you have become a Provider"
             },
             {
             status: 200
